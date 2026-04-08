@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#12CFC2" />
+
+    <!-- top-left round, bottom-right round -->
+    <!-- you can adjust based on your design -->
+    <corners
+        android:topLeftRadius="18dp"
+        android:bottomRightRadius="18dp" />
+</shape>

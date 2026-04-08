@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/custom_bottom_nav"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="@android:color/white"
+    android:elevation="8dp"
+    android:orientation="horizontal"
+    android:baselineAligned="false">
+
+    <!-- Home Item -->
+    <LinearLayout
+        android:id="@+id/nav_home"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/iv_home"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_home"
+            app:tint="@color/bottom_nav_color" />
+
+        <TextView
+            android:id="@+id/tv_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/nav_home"
+            android:textColor="@color/bottom_nav_color"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- Cart Item -->
+    <LinearLayout
+        android:id="@+id/nav_cart"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/iv_cart"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_cart"
+            app:tint="@color/bottom_nav_color" />
+
+        <TextView
+            android:id="@+id/tv_cart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/nav_cart"
+            android:textColor="@color/bottom_nav_color"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- Order Item -->
+    <LinearLayout
+        android:id="@+id/nav_order"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/iv_order"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_order"
+            app:tint="@color/bottom_nav_color" />
+
+        <TextView
+            android:id="@+id/tv_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/nav_order"
+            android:textColor="@color/bottom_nav_color"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- Profile Item -->
+    <LinearLayout
+        android:id="@+id/nav_profile"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/iv_profile"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_profile"
+            app:tint="@color/bottom_nav_color" />
+
+        <TextView
+            android:id="@+id/tv_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/nav_profile"
+            android:textColor="@color/bottom_nav_color"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+</LinearLayout>
