@@ -12,4 +12,8 @@
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
     </style>
+
+    <style name="CircleAppearance">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

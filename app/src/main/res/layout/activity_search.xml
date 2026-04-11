@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- Search Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="#FFFFFF">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="6dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="#333333"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Go back" />
+
+        <FrameLayout
+            android:id="@+id/searchBarContainer"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_search_box">
+
+            <EditText
+                android:id="@+id/etSearchInput"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:hint="Search movies, actors..."
+                android:paddingStart="40dp"
+                android:paddingEnd="12dp"
+                android:textSize="15sp"
+                android:textColor="#222222"
+                android:textColorHint="#999999"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:singleLine="true"
+                android:autofillHints="none"
+                android:focusedByDefault="true" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginStart="14dp"
+                android:src="@drawable/ic_search"
+                app:tint="#777777"
+                android:contentDescription="Search icon" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvSearchBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:textColor="#12BFE6"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackground" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="32dp">
+
+            <!-- Redesigned Unified Accordion -->
+            <LinearLayout
+                android:id="@+id/llAccordionContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_accordion_container">
+
+                <!-- Tappable Header -->
+                <LinearLayout
+                    android:id="@+id/btnAdvancedFilters"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/ivFilterIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_filter"
+                        app:tint="#444444" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Filters"
+                            android:textColor="#222222"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvFilterSummary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Action • 2024"
+                            android:textColor="#777777"
+                            android:textSize="12sp"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvFilterCount"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/bg_profile_avatar"
+                        android:backgroundTint="#12BFE6"
+                        android:text="1"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/ivFilterArrow"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_expand_more"
+                        app:tint="#BBBBBB" />
+                </LinearLayout>
+
+                <!-- Expanded Content Panel -->
+                <LinearLayout
+                    android:id="@+id/filterPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="24dp">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F0F0F0"
+                        android:layout_marginBottom="16dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GENRE"
+                        android:textSize="11sp"
+                        android:textColor="#999999"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.08"
+                        android:layout_marginBottom="12dp"/>
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/cgGenres"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:singleSelection="true"
+                        app:chipSpacingVertical="4dp"
+                        app:chipSpacingHorizontal="8dp">
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Action"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Comedy"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Drama"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sci-Fi"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="RELEASE YEAR"
+                        android:textSize="11sp"
+                        android:textColor="#999999"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.08"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginBottom="12dp"/>
+
+                    <Spinner
+                        android:id="@+id/spinnerYear"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_filter_trigger"
+                        android:paddingStart="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DIRECTOR"
+                        android:textSize="11sp"
+                        android:textColor="#999999"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.08"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginBottom="12dp"/>
+
+                    <EditText
+                        android:id="@+id/etDirector"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="e.g. Christopher Nolan"
+                        android:textSize="14sp"
+                        android:inputType="textPersonName"
+                        android:autofillHints="name"
+                        android:background="@drawable/bg_filter_trigger"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="#222222"
+                        android:textColorHint="#BBBBBB"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Recent Searches Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="32dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:id="@+id/tvRecentHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Recent Searches"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#222222" />
+
+                    <TextView
+                        android:id="@+id/tvClearRecent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:text="Clear All"
+                        android:textColor="#777777"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:padding="4dp"
+                        android:background="?attr/selectableItemBackground" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvRecentHeader"
+                        android:text="Tap to search again"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:layout_marginTop="2dp" />
+                </RelativeLayout>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cgRecentSearches"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingVertical="8dp"
+                    app:chipSpacingHorizontal="8dp">
+
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Interstellar"
+                        app:chipBackgroundColor="#F8F9FA"
+                        app:chipStrokeColor="#E9ECEF"
+                        app:chipStrokeWidth="1dp"
+                        app:closeIconVisible="true"
+                        app:closeIconTint="#999999"
+                        android:textColor="#444444"
+                        android:textSize="13sp"
+                        app:chipCornerRadius="12dp"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Inception"
+                        app:chipBackgroundColor="#F8F9FA"
+                        app:chipStrokeColor="#E9ECEF"
+                        app:chipStrokeWidth="1dp"
+                        app:closeIconVisible="true"
+                        app:closeIconTint="#999999"
+                        android:textColor="#444444"
+                        android:textSize="13sp"
+                        app:chipCornerRadius="12dp"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="The Dark Knight"
+                        app:chipBackgroundColor="#F8F9FA"
+                        app:chipStrokeColor="#E9ECEF"
+                        app:chipStrokeWidth="1dp"
+                        app:closeIconVisible="true"
+                        app:closeIconTint="#999999"
+                        android:textColor="#444444"
+                        android:textSize="13sp"
+                        app:chipCornerRadius="12dp"/>
+                </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

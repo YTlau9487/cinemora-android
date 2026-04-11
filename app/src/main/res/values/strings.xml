@@ -4,4 +4,27 @@
     <string name="nav_cart">Cart</string>
     <string name="nav_order">Order</string>
     <string name="nav_profile">Profile</string>
+    <string name="credits_label">Credits</string>
+    <string name="orders_label">Orders</string>
+    <string name="account_settings_label">Account Settings</string>
+    <string name="payment_methods_label">Payment Methods</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="notifications">Notifications</string>
+    <string name="help_support">Help &amp; Support</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="update_photo">Update Photo</string>
+    <string name="full_name">Full Name</string>
+    <string name="email_address">Email Address</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="cancel">Cancel</string>
+    <string name="placeholder_name">John Doe</string>
+    <string name="placeholder_email">john.doe@example.com</string>
+    <string name="placeholder_credits">120 pts</string>
+    <string name="placeholder_orders">7</string>
+
+    <!-- Search Results -->
+    <string name="search_results_count">Showing %1$d results</string>
+    <string name="no_results_found">No results found</string>
+    <string name="no_results_message">We couldn\'t find any movies matching your search.</string>
 </resources>
