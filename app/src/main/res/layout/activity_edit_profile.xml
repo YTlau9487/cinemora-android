@@ -5,25 +5,31 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA"
+    android:background="#FFFFFF"
     tools:context=".EditProfileActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#12BFE6"
+        android:background="#FFFFFF"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="64dp"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:navigationIconTint="@color/white"
-            app:title="Edit Profile"
-            app:titleCentered="true"
+            app:navigationIconTint="#1F1F1F"
+            app:title="@string/edit_profile"
+            app:titleCentered="false"
+            app:titleMarginStart="16dp"
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
-            app:titleTextColor="@color/white" />
+            app:titleTextColor="#333333" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F0F0F0" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -36,145 +42,207 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:paddingBottom="40dp">
 
             <!-- Avatar Change Section -->
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imgEditAvatar"
-                android:layout_width="112dp"
-                android:layout_height="112dp"
-                android:layout_marginTop="16dp"
-                android:padding="2dp"
-                android:scaleType="centerCrop"
-                android:background="@android:color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/CircleAppearance"
-                app:strokeColor="#12BFE6"
-                app:strokeWidth="2dp"
-                tools:src="@tools:sample/avatars" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabChangePhoto"
+            <FrameLayout
+                android:id="@+id/avatarContainer"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="Change Photo"
-                app:fabSize="mini"
-                app:backgroundTint="#12BFE6"
-                app:tint="@color/white"
-                app:layout_constraintBottom_toBottomOf="@id/imgEditAvatar"
-                app:layout_constraintEnd_toEndOf="@id/imgEditAvatar"
-                app:srcCompat="@android:drawable/ic_menu_camera" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnChangePhotoText"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Update Photo"
-                android:textColor="#12BFE6"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/imgEditAvatar" />
-
-            <!-- Form Fields (Consistency with existing card/box styles) -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilFullName"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:hint="Full Name"
-                app:boxStrokeColor="#12BFE6"
-                app:hintTextColor="#12BFE6"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnChangePhotoText"
-                app:startIconDrawable="@android:drawable/ic_menu_myplaces"
-                app:startIconTint="#12BFE6">
+                app:layout_constraintTop_toTopOf="parent">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etFullName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="John Doe"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgEditAvatar"
+                    android:layout_width="112dp"
+                    android:layout_height="112dp"
+                    android:padding="2dp"
+                    android:scaleType="centerCrop"
+                    android:background="@android:color/white"
+                    app:shapeAppearanceOverlay="@style/CircleAppearance"
+                    app:strokeColor="#F0F0F0"
+                    app:strokeWidth="1dp"
+                    tools:src="@tools:sample/avatars" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilEmail"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
+                <!-- Refined camera badge: Balanced White Surface + Blue Icon -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/badgeCamera"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="4dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#12BFE6">
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_add_a_photo"
+                        android:contentDescription="@string/change_photo"
+                        app:tint="#12BFE6" />
+                </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvUpdatePhotoLabel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="Email Address"
-                app:boxStrokeColor="#12BFE6"
-                app:hintTextColor="#12BFE6"
+                android:layout_marginTop="12dp"
+                android:text="@string/update_photo"
+                android:textColor="#999999"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tilFullName"
-                app:startIconDrawable="@android:drawable/ic_dialog_email"
-                app:startIconTint="#12BFE6">
+                app:layout_constraintTop_toBottomOf="@id/avatarContainer" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:text="john.doe@example.com"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilPhone"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
+            <!-- Form Fields -->
+            <LinearLayout
+                android:id="@+id/formContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="Phone Number"
-                app:boxStrokeColor="#12BFE6"
-                app:hintTextColor="#12BFE6"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tilEmail"
-                app:startIconDrawable="@android:drawable/ic_menu_call"
-                app:startIconTint="#12BFE6">
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp"
+                android:layout_marginTop="32dp"
+                app:layout_constraintTop_toBottomOf="@id/tvUpdatePhotoLabel">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPhone"
+                <!-- Full Name -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/full_name"
+                    android:textColor="#999999"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilFullName"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    app:boxStrokeColor="#12BFE6"
+                    app:hintEnabled="false"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxStrokeWidth="1dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etFullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:paddingVertical="14dp"
+                        android:text="@string/placeholder_name"
+                        android:textColor="#333333"
+                        android:textSize="15sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Email Address -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/email_address"
+                    android:textColor="#999999"
+                    android:textSize="12sp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilEmail"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxStrokeColor="#12BFE6"
+                    app:hintEnabled="false"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxStrokeWidth="1dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:paddingVertical="14dp"
+                        android:text="@string/placeholder_email"
+                        android:textColor="#333333"
+                        android:textSize="15sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Phone Number -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/phone_number"
+                    android:textColor="#999999"
+                    android:textSize="12sp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPhone"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxStrokeColor="#12BFE6"
+                    app:hintEnabled="false"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxStrokeWidth="1dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone"
+                        android:paddingVertical="14dp"
+                        android:text="+1 234 567 890"
+                        android:textColor="#333333"
+                        android:textSize="15sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
 
             <!-- Action Buttons -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveChanges"
-                android:layout_width="0dp"
-                android:layout_height="54dp"
-                android:layout_marginTop="48dp"
-                android:text="Save Changes"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="24dp"
+                android:text="@string/save_changes"
                 android:backgroundTint="#12BFE6"
-                android:textColor="@android:color/white"
+                android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                app:cornerRadius="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tilPhone" />
+                android:textSize="16sp"
+                app:cornerRadius="14dp"
+                app:elevation="0dp"
+                app:layout_constraintTop_toBottomOf="@id/formContainer" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCancel"
                 style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="0dp"
-                android:layout_height="54dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Cancel"
+                android:text="@string/cancel"
                 android:textColor="#999999"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btnSaveChanges" />
