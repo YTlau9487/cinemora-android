@@ -2,6 +2,12 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Cinemora" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/black</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_app_icon</item>
+        <item name="postSplashScreenTheme">@style/Theme.Cinemora</item>
     </style>
 </resources>

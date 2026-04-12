@@ -28,4 +28,6 @@
     <string name="search_results_count">Showing %1$d results</string>
     <string name="no_results_found">No results found</string>
     <string name="no_results_message">We couldn\'t find any movies matching your search.</string>
+
+    <string name="slogan">one tap, one movie</string>
 </resources>
