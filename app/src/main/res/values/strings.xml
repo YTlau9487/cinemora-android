@@ -23,6 +23,16 @@
     <string name="placeholder_email">john.doe@example.com</string>
     <string name="placeholder_credits">120 pts</string>
     <string name="placeholder_orders">7</string>
+    <string name="order_details">Order Details</string>
+    <string name="purchased_items">Purchased Items</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="discount">Discount</string>
+    <string name="total">Total</string>
+    <string name="credits">Credits</string>
+    <string name="credits_before">Credits Before</string>
+    <string name="amount_used">Amount Used</string>
+    <string name="credits_after">Credits After</string>
 
     <!-- Search Results -->
     <string name="search_results_count">Showing %1$d results</string>
