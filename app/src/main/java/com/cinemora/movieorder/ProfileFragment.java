@@ -1,34 +1,43 @@
 package com.cinemora.movieorder;
 
-// Bundle：用來保存或接收 Fragment 狀態資料
+import android.content.Intent;
 import android.os.Bundle;
-
-// 建立畫面時需要的 class
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-// AndroidX 註解
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-// Fragment 父類別
 import androidx.fragment.app.Fragment;
+import com.google.android.material.button.MaterialButton;
 
-// ProfileFragment 代表個人資料頁面
+/**
+ * Fragment representing the user's profile page.
+ * Handles display of user information and navigation to account settings.
+ */
 public class ProfileFragment extends Fragment {
 
-    // 空的建構子
     public ProfileFragment() {
+        // Required empty public constructor
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        // 把 fragment_profile.xml 轉成畫面並回傳
-        // 目前先只做靜態版面，之後再接會員資料
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        // Initialize UI components
+        MaterialButton btnEditProfile = view.findViewById(R.id.btnEditProfile);
+
+        // Handle navigation to EditProfileActivity
+        if (btnEditProfile != null) {
+            btnEditProfile.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), EditProfileActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        return view;
     }
 }

@@ -18,6 +18,7 @@
     <string name="phone_number">Phone Number</string>
     <string name="save_changes">Save Changes</string>
     <string name="cancel">Cancel</string>
+    <string name="change_photo">Change photo</string>
     <string name="placeholder_name">John Doe</string>
     <string name="placeholder_email">john.doe@example.com</string>
     <string name="placeholder_credits">120 pts</string>
