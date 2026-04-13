@@ -178,7 +178,7 @@ tools:context=".OrderDetailActivity">
                             android:text="HKD 173"
                             android:textStyle="bold"
                             android:textSize="17sp"
-                            android:textColor="#12BFE6"
+                            android:textColor="#12CFC2"
                             app:layout_constraintBaseline_toBaselineOf="@id/TotalLabel"
                             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -304,7 +304,7 @@ tools:context=".OrderDetailActivity">
                     app:cardElevation="0dp"
                     app:strokeWidth="1dp"
                     app:strokeColor="#BFEFF7"
-                    app:cardBackgroundColor="#EAFBFF">
+                    app:cardBackgroundColor="#12CFC2">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -328,7 +328,7 @@ tools:context=".OrderDetailActivity">
                             android:text="Order Completed"
                             android:textStyle="bold"
                             android:textSize="15sp"
-                            android:textColor="#12BFE6"
+                            android:textColor="#146862"
                             app:layout_constraintStart_toEndOf="@id/viewStatusBall"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintEnd_toEndOf="parent" />
@@ -340,7 +340,7 @@ tools:context=".OrderDetailActivity">
                             android:layout_marginTop="4dp"
                             android:text="Your order has been successfully processed"
                             android:textSize="13sp"
-                            android:textColor="#7AAAB4"
+                            android:textColor="#60848B"
                             app:layout_constraintStart_toStartOf="@id/StatusTitle"
                             app:layout_constraintTop_toBottomOf="@id/StatusTitle"
                             app:layout_constraintEnd_toEndOf="parent" />
