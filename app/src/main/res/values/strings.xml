@@ -33,6 +33,11 @@
     <string name="credits_before">Credits Before</string>
     <string name="amount_used">Amount Used</string>
     <string name="credits_after">Credits After</string>
+    <string name="order_number">Order Number</string>
+    <string name="date">Date</string>
+    <string name="purchaseditems">Purchased Items</string>
+    <string name="credits_used">Credits Used</string>
+    <string name="remaining_credits">Remaining Credits</string>
 
     <!-- Search Results -->
     <string name="search_results_count">Showing %1$d results</string>
