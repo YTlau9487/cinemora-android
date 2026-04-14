@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -189,13 +190,31 @@ public class SearchActivity extends AppCompatActivity {
      */
     private void performSearch() {
         String query = etSearchInput.getText().toString().trim();
-        if (!query.isEmpty()) {
-            Intent intent = new Intent(this, SearchResultActivity.class);
-            intent.putExtra("QUERY", query);
-            // Clear existing activities to maintain a clean search flow
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+        
+        // Extract filters
+        String genre = "";
+        int checkedId = cgGenres.getCheckedChipId();
+        if (checkedId != View.NO_ID) {
+            Chip chip = findViewById(checkedId);
+            if (chip != null) genre = chip.getText().toString();
         }
+
+        String year = spinnerYear.getSelectedItem() != null ? spinnerYear.getSelectedItem().toString() : "";
+        String director = etDirector.getText().toString().trim();
+
+        if (query.isEmpty() && genre.isEmpty() && (year.isEmpty() || year.equals("All Years")) && director.isEmpty()) {
+            Toast.makeText(this, "Please enter a search term or select a filter", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, SearchResultActivity.class);
+        intent.putExtra("QUERY", query);
+        intent.putExtra("GENRE", genre);
+        intent.putExtra("YEAR", year);
+        intent.putExtra("DIRECTOR", director);
+        
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     @Override

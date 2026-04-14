@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import java.util.List;
 
 /**
  * Activity that displays the results of a movie search.
@@ -27,10 +30,14 @@ public class SearchResultActivity extends AppCompatActivity {
     private TextView tvResultsCount;
     private LinearLayout layoutEmptyState;
 
+    private FirebaseManager firebaseManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
+
+        firebaseManager = new FirebaseManager();
 
         // Initialize UI components
         tvSearchQuery = findViewById(R.id.tvSearchQuery);
@@ -47,7 +54,6 @@ public class SearchResultActivity extends AppCompatActivity {
         });
 
         // Handle system back gesture using modern OnBackPressedDispatcher
-        // This ensures the shared element transition plays in reverse
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -58,40 +64,69 @@ public class SearchResultActivity extends AppCompatActivity {
         // Set up the search bar to navigate back to SearchActivity with a shared element animation
         searchBarContainer.setOnClickListener(v -> {
             Intent intent = new Intent(this, SearchActivity.class);
-            // Ensure we don't keep multiple instances of SearchActivity in the stack
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             
-            // Create the scene transition for the search bar container
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     this, searchBarContainer, "search_bar_transform");
             
             startActivity(intent, options.toBundle());
         });
 
-        // Retrieve and display the search query from the intent
+        // Retrieve search parameters
         String query = getIntent().getStringExtra("QUERY");
-        if (query != null) {
+        String genre = getIntent().getStringExtra("GENRE");
+        String year = getIntent().getStringExtra("YEAR");
+        String director = getIntent().getStringExtra("DIRECTOR");
+
+        if (query != null && !query.isEmpty()) {
             tvSearchQuery.setText(query);
+        } else if (genre != null && !genre.isEmpty()) {
+            tvSearchQuery.setText(genre);
+        } else {
+            tvSearchQuery.setText("Search Results");
         }
 
-        // Initialize RecyclerView for displaying search results
+        // Initialize RecyclerView
         rvSearchResults.setLayoutManager(new LinearLayoutManager(this));
 
-        // For now, since we haven't implemented the actual search logic yet,
-        // we'll default to the empty state.
-        updateSearchResults(0);
+        // Perform Search
+        performFirestoreSearch(query, genre, year, director);
     }
 
-    /**
-     * Updates the UI based on the number of results found.
-     * @param count The number of search results.
-     */
-    private void updateSearchResults(int count) {
-        if (count > 0) {
+    private void performFirestoreSearch(String query, String genre, String year, String director) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query firestoreQuery = db.collection("movies");
+
+        // Simple filtering (Firestore has limitations on multiple inequality filters)
+        if (genre != null && !genre.isEmpty()) {
+            firestoreQuery = firestoreQuery.whereEqualTo("genre", genre);
+        }
+        
+        // Note: Full-text search (query) and complex filters usually require Algolia/ElasticSearch
+        // For this simple app, we'll fetch results and filter basic matches
+        firestoreQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            List<Movie> results = queryDocumentSnapshots.toObjects(Movie.class);
+            
+            // Client-side filtering for text query if present
+            if (query != null && !query.isEmpty()) {
+                results.removeIf(movie -> !movie.getTitle().toLowerCase().contains(query.toLowerCase()));
+            }
+
+            updateUI(results);
+        }).addOnFailureListener(e -> {
+            updateUI(null);
+        });
+    }
+
+    private void updateUI(List<Movie> results) {
+        if (results != null && !results.isEmpty()) {
             layoutResultsHeader.setVisibility(View.VISIBLE);
             rvSearchResults.setVisibility(View.VISIBLE);
             layoutEmptyState.setVisibility(View.GONE);
-            tvResultsCount.setText(getString(R.string.search_results_count, count));
+            tvResultsCount.setText("Showing " + results.size() + " results");
+            
+            MovieAdapter adapter = new MovieAdapter(this, results, false);
+            rvSearchResults.setAdapter(adapter);
         } else {
             layoutResultsHeader.setVisibility(View.GONE);
             rvSearchResults.setVisibility(View.GONE);

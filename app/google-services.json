@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "292383577782",
+    "project_id": "cinemora-movie-order",
+    "storage_bucket": "cinemora-movie-order.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292383577782:android:633c74461515aa52ee3817",
+        "android_client_info": {
+          "package_name": "com.cinemora.movieorder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAUjJ792_P6Ycefhs-XEPRx26LO2CazaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
