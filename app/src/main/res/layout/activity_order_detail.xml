@@ -44,43 +44,51 @@
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/formContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:paddingHorizontal="24dp"
             android:paddingTop="16dp"
             android:paddingBottom="40dp">
 
             <!-- Purchased Items Section -->
             <TextView
+                android:id="@+id/tvPurchasedItemsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
                 android:text="@string/purchased_items"
                 android:textColor="#333333"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvItems"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:nestedScrollingEnabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvPurchasedItemsLabel"
                 tools:itemCount="3" />
 
             <!-- Order Summary Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/OrderSummary"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:strokeWidth="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rvItems"
                 app:strokeColor="#EEEEEE"
-                app:cardBackgroundColor="#FFFFFF">
+                app:strokeWidth="1dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -92,9 +100,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/order_summary"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
                         android:textColor="#111111"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -102,104 +110,96 @@
                         android:id="@+id/SubtotalLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="16dp">
+                        android:layout_marginTop="12dp"
+                        android:text="@string/subtotal"
+                        android:textColor="#888888"
+                        android:textSize="15sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/OrderSummaryLabel" />
 
-                        <TextView
-                            android:id="@+id/OrderSummaryLabel"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text="@string/order_summary"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="#111111"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                    <TextView
+                        android:id="@+id/SubtotalValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HKD 203"
+                        android:textColor="#111111"
+                        android:textSize="15sp"
+                        app:layout_constraintBaseline_toBaselineOf="@id/SubtotalLabel"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
-                        <TextView
-                            android:id="@+id/SubtotalLabel"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:text="@string/subtotal"
-                            android:textSize="15sp"
-                            android:textColor="#888888"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/OrderSummaryLabel"
-                            app:layout_constraintEnd_toStartOf="@id/SubtotalValue"/>
+                    <TextView
+                        android:id="@+id/DiscountLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/discount"
+                        android:textColor="#888888"
+                        android:textSize="15sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/SubtotalLabel" />
 
-                        <TextView
-                            android:id="@+id/SubtotalValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="HKD 203"
-                            android:textSize="15sp"
-                            android:textColor="#111111"
-                            app:layout_constraintBaseline_toBaselineOf="@id/SubtotalLabel"
-                            app:layout_constraintEnd_toEndOf="parent"/>
+                    <TextView
+                        android:id="@+id/DiscountValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="- HKD 30"
+                        android:textColor="#2ECC71"
+                        android:textSize="15sp"
+                        app:layout_constraintBaseline_toBaselineOf="@id/DiscountLabel"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
-                        <TextView
-                            android:id="@+id/DiscountLabel"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="@string/discount"
-                            android:textSize="15sp"
-                            android:textColor="#888888"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/SubtotalLabel"
-                            app:layout_constraintEnd_toStartOf="@id/DiscountValue"/>
+                    <View
+                        android:id="@+id/dividerSummary"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="12dp"
+                        android:background="#F0F0F0"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/DiscountLabel" />
 
-                        <TextView
-                            android:id="@+id/DiscountValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="- HKD 30"
-                            android:textSize="15sp"
-                            android:textColor="#2ECC71"
-                            app:layout_constraintBaseline_toBaselineOf="@id/DiscountLabel"
-                            app:layout_constraintEnd_toEndOf="parent"/>
+                    <TextView
+                        android:id="@+id/TotalLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/total"
+                        android:textColor="#111111"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/dividerSummary" />
 
-                        <View
-                            android:id="@+id/dividerSummary"
-                            android:layout_width="0dp"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="12dp"
-                            android:background="#F0F0F0"
-                            app:layout_constraintTop_toBottomOf="@id/DiscountLabel"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"/>
+                    <TextView
+                        android:id="@+id/TotalValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HKD 173"
+                        android:textColor="#12CFC2"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBaseline_toBaselineOf="@id/TotalLabel"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
-                        <TextView
-                            android:id="@+id/TotalLabel"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:text="@string/total"
-                            android:textStyle="bold"
-                            android:textSize="17sp"
-                            android:textColor="#111111"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/dividerSummary"
-                            app:layout_constraintEnd_toStartOf="@id/TotalValue"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                        <TextView
-                            android:id="@+id/TotalValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="HKD 173"
-                            android:textStyle="bold"
-                            android:textSize="17sp"
-                            android:textColor="#12CFC2"
-                            app:layout_constraintBaseline_toBaselineOf="@id/TotalLabel"
-                            app:layout_constraintEnd_toEndOf="parent"/>
+            <!-- Credits Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardCredits"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/OrderSummary"
+                app:strokeColor="#EEEEEE"
+                app:strokeWidth="1dp">
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardCredits"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp">
@@ -209,9 +209,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/credits"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
                         android:textColor="#111111"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -221,8 +221,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:text="@string/credits_before"
-                        android:textSize="15sp"
                         android:textColor="#888888"
+                        android:textSize="15sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/CreditsLabel" />
 
@@ -231,8 +231,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="120 pts"
-                        android:textSize="15sp"
                         android:textColor="#111111"
+                        android:textSize="15sp"
                         app:layout_constraintBaseline_toBaselineOf="@id/CreditsBeforeLabel"
                         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -242,8 +242,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="@string/amount_used"
-                        android:textSize="15sp"
                         android:textColor="#888888"
+                        android:textSize="15sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/CreditsBeforeLabel" />
 
@@ -252,8 +252,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="- 173 pts"
-                        android:textSize="15sp"
                         android:textColor="#FF5A5A"
+                        android:textSize="15sp"
                         app:layout_constraintBaseline_toBaselineOf="@id/CreditsUsedLabel"
                         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -263,9 +263,9 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="12dp"
                         android:background="#F0F0F0"
-                        app:layout_constraintTop_toBottomOf="@id/CreditsUsedLabel"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        app:layout_constraintTop_toBottomOf="@id/CreditsUsedLabel" />
 
                     <TextView
                         android:id="@+id/CreditsAfterLabel"
@@ -273,9 +273,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:text="@string/credits_after"
-                        android:textStyle="bold"
-                        android:textSize="17sp"
                         android:textColor="#111111"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/dividerCredits" />
 
@@ -284,9 +284,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="-53 pts"
-                        android:textStyle="bold"
-                        android:textSize="17sp"
                         android:textColor="#2ECC71"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
                         app:layout_constraintBaseline_toBaselineOf="@id/CreditsAfterLabel"
                         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -296,68 +296,59 @@
             <!-- Order Status Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardOrderStatus"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#EAFBFF"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:strokeWidth="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardCredits"
                 app:strokeColor="#BFEFF7"
-                app:cardBackgroundColor="#EAFBFF">
+                app:strokeWidth="1dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="#BFEFF7"
-                    app:cardBackgroundColor="#12CFC2">
+                    android:padding="14dp">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
+                    <View
+                        android:id="@+id/viewStatusBall"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:background="@drawable/bg_status_ball"
+                        app:layout_constraintBottom_toBottomOf="@id/StatusTitle"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/StatusTitle" />
+
+                    <TextView
+                        android:id="@+id/StatusTitle"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:padding="14dp">
+                        android:layout_marginStart="10dp"
+                        android:text="Order Completed"
+                        android:textColor="#146862"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/viewStatusBall"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <View
-                            android:id="@+id/viewStatusBall"
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:background="@drawable/bg_status_ball"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="@id/StatusTitle"
-                            app:layout_constraintBottom_toBottomOf="@id/StatusTitle" />
+                    <TextView
+                        android:id="@+id/StatusDesc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Your order has been successfully processed"
+                        android:textColor="#60848B"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/StatusTitle"
+                        app:layout_constraintTop_toBottomOf="@id/StatusTitle" />
 
-                        <TextView
-                            android:id="@+id/StatusTitle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:text="Order Completed"
-                            android:textStyle="bold"
-                            android:textSize="15sp"
-                            android:textColor="#146862"
-                            app:layout_constraintStart_toEndOf="@id/viewStatusBall"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
-
-                        <TextView
-                            android:id="@+id/StatusDesc"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Your order has been successfully processed"
-                            android:textSize="13sp"
-                            android:textColor="#60848B"
-                            app:layout_constraintStart_toStartOf="@id/StatusTitle"
-                            app:layout_constraintTop_toBottomOf="@id/StatusTitle"
-                            app:layout_constraintEnd_toEndOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-            </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
