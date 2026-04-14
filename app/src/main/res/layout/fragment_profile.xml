@@ -1,327 +1,251 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA"
-    android:fillViewport="true">
+    android:background="#F8F9FA">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Logged In State -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_profile_logged_in"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="40dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:visibility="visible">
 
-        <!-- CALM HEADER: Subtle gradient transition instead of solid block -->
-        <View
-            android:id="@+id/headerAccent"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:background="@drawable/bg_profile_header_gradient"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- Avatar with brand color ring -->
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imgProfileAvatar"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:layout_marginTop="60dp"
-            android:padding="4dp"
-            android:scaleType="centerCrop"
-            android:background="@android:color/white"
-            android:contentDescription="Profile Picture"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/CircleAppearance"
-            app:strokeColor="#12BFE6"
-            app:strokeWidth="2dp"
-            tools:src="@tools:sample/avatars" />
-
-        <TextView
-            android:id="@+id/tvProfileName"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/placeholder_name"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgProfileAvatar" />
+            android:paddingBottom="40dp">
 
-        <TextView
-            android:id="@+id/tvProfileEmail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/placeholder_email"
-            android:textColor="#666666"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvProfileName" />
-
-        <!-- UNIFIED STATS CARD: White background, subtle border, same radius as settings -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardProfileStats"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="28dp"
-            android:layout_marginEnd="20dp"
-            app:cardBackgroundColor="@android:color/white"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#F0F0F0"
-            app:strokeWidth="1dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvProfileEmail">
-
-            <LinearLayout
+            <View
+                android:id="@+id/headerAccent"
                 android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:background="@drawable/bg_profile_header_gradient"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imgProfileAvatar"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_marginTop="60dp"
+                android:padding="4dp"
+                android:scaleType="centerCrop"
+                android:background="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/CircleAppearance"
+                app:strokeColor="#12BFE6"
+                app:strokeWidth="2dp"
+                tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/tvProfileName"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:orientation="horizontal"
-                android:paddingVertical="20dp">
+                android:layout_marginTop="16dp"
+                android:text="Username"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imgProfileAvatar" />
+
+            <TextView
+                android:id="@+id/tvProfileEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="email@example.com"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvProfileName" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardProfileStats"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="20dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#F0F0F0"
+                app:strokeWidth="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvProfileEmail">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:paddingVertical="20dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/credits_label"
-                        android:textColor="#999999"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textAllCaps="true"
-                        android:letterSpacing="0.1" />
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvProfileCredit"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CREDITS"
+                            android:textColor="#999999"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.1" />
+
+                        <TextView
+                            android:id="@+id/tvProfileCredit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="0 pts"
+                            android:textColor="#12BFE6"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="#F0F0F0" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="@string/placeholder_credits"
-                        android:textColor="#12BFE6"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ORDERS"
+                            android:textColor="#999999"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.1" />
+
+                        <TextView
+                            android:id="@+id/tvProfileOrders"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="0"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="#F0F0F0" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditProfile"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:text="Edit Profile"
+                android:backgroundTint="#12BFE6"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                app:cornerRadius="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardProfileStats" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+            <TextView
+                android:id="@+id/labelPreferences"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:text="Account Settings"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnEditProfile" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/orders_label"
-                        android:textColor="#999999"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textAllCaps="true"
-                        android:letterSpacing="0.1" />
+            <!-- Simple Logout Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogout"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Sign Out"
+                android:textColor="#FF4D4D"
+                android:textStyle="bold"
+                app:icon="@android:drawable/ic_lock_power_off"
+                app:iconTint="#FF4D4D"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/labelPreferences" />
 
-                    <TextView
-                        android:id="@+id/tvProfileOrders"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="@string/placeholder_orders"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
-        <!-- ACCENT BUTTON: Integrated secondary action -->
+    <!-- Logged Out State -->
+    <LinearLayout
+        android:id="@+id/layout_profile_logged_out"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_person"
+            app:tint="#DDDDDD" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Your Profile"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Sign in to view your profile, orders, and credits."
+            android:textColor="#666666"
+            android:textSize="14sp" />
+
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEditProfile"
-            android:layout_width="0dp"
+            android:id="@+id/btn_sign_in_profile"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:text="@string/edit_profile"
+            android:layout_marginTop="32dp"
+            android:text="Sign In"
             android:backgroundTint="#12BFE6"
             android:textColor="@android:color/white"
             android:textStyle="bold"
-            app:cornerRadius="16dp"
-            app:elevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardProfileStats" />
+            app:cornerRadius="28dp" />
+    </LinearLayout>
 
-        <!-- ACCOUNT SETTINGS: Grouped items in cohesive card style -->
-        <TextView
-            android:id="@+id/labelPreferences"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/account_settings_label"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnEditProfile" />
-
-        <LinearLayout
-            android:id="@+id/layoutNotifications"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginHorizontal="20dp"
-            android:background="@drawable/bg_profile_item_card"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/labelPreferences">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_popup_reminder"
-                android:contentDescription="Notifications"
-                app:tint="#12BFE6" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_weight="1"
-                android:text="@string/notifications"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_expand_more"
-                android:rotation="270"
-                android:contentDescription="Navigate"
-                app:tint="#CCCCCC" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutPaymentMethods"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginHorizontal="20dp"
-            android:background="@drawable/bg_profile_item_card"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layoutNotifications">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_save"
-                android:contentDescription="Payment Methods"
-                app:tint="#12BFE6" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_weight="1"
-                android:text="@string/payment_methods_label"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_expand_more"
-                android:rotation="270"
-                android:contentDescription="Navigate"
-                app:tint="#CCCCCC" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutHelp"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginHorizontal="20dp"
-            android:background="@drawable/bg_profile_item_card"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layoutPaymentMethods">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_help"
-                android:contentDescription="Help"
-                app:tint="#12BFE6" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_weight="1"
-                android:text="@string/help_support"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_expand_more"
-                android:rotation="270"
-                android:contentDescription="Navigate"
-                app:tint="#CCCCCC" />
-        </LinearLayout>
-
-        <!-- SUBTLE SIGN OUT: Isolated but less dominant -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLogout"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
-            android:text="@string/sign_out"
-            android:textColor="#FF4D4D"
-            android:textStyle="bold"
-            app:icon="@android:drawable/ic_lock_power_off"
-            app:iconTint="#FF4D4D"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layoutHelp" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.core.widget.NestedScrollView>
+</FrameLayout>

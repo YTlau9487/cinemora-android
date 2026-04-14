@@ -1,24 +1,22 @@
 package com.cinemora.movieorder;
 
-// Bundle：用來保存或接收 Fragment 狀態資料
 import android.os.Bundle;
-
-// 建立畫面時會用到的 class
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-// AndroidX 註解
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-// Fragment 父類別
 import androidx.fragment.app.Fragment;
 
-// CartFragment 代表購物車頁面
+import com.google.android.material.button.MaterialButton;
+
 public class CartFragment extends Fragment {
 
-    // 空的建構子
+    private boolean isLoaded = false;
+    private MaterialButton btnCheckout;
+
     public CartFragment() {
     }
 
@@ -26,10 +24,34 @@ public class CartFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_cart, container, false);
+        
+        btnCheckout = view.findViewById(R.id.btnCheckout);
+        if (btnCheckout != null) {
+            btnCheckout.setOnClickListener(v -> {
+                DialogHelper.showConfirmationDialog(
+                        getContext(),
+                        "Confirm Order",
+                        "Are you sure you want to place this order?",
+                        "Confirm",
+                        "Cancel",
+                        () -> {
+                            // Implement actual order logic here
+                            Toast.makeText(getContext(), "Order placed successfully!", Toast.LENGTH_SHORT).show();
+                        },
+                        null
+                );
+            });
+        }
 
-        // 把 fragment_cart.xml 轉換成畫面並回傳
-        // 目前這個 Fragment 只有負責顯示 layout
-        // 還沒有加入購物車資料邏輯
-        return inflater.inflate(R.layout.fragment_cart, container, false);
+        loadDataIfNeeded();
+        return view;
+    }
+
+    public void loadDataIfNeeded() {
+        if (!isLoaded && getView() != null) {
+            // Load cart data from Firebase here
+            isLoaded = true;
+        }
     }
 }

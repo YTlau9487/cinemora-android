@@ -88,29 +88,30 @@
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp">
 
-                    <!-- Full Name -->
+                    <!-- Username -->
                     <TextView
-                        android:id="@+id/tv_name_label"
+                        android:id="@+id/tv_username_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Full Name"
+                        android:text="Username"
                         android:textStyle="bold"
                         android:textColor="#333333"
                         android:textSize="14sp" />
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_name"
+                        android:id="@+id/til_username"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        app:hintEnabled="false">
+                        app:hintEnabled="false"
+                        app:errorEnabled="true">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/fullname_input"
+                            android:id="@+id/username_input"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Enter your full name"
+                            android:hint="Enter your username"
                             android:inputType="textPersonName"
                             android:textSize="14sp" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -120,7 +121,7 @@
                         android:id="@+id/tv_email_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="2dp"
                         android:text="Email Address"
                         android:textStyle="bold"
                         android:textColor="#333333"
@@ -132,7 +133,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        app:hintEnabled="false">
+                        app:hintEnabled="false"
+                        app:errorEnabled="true">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/email_input"
@@ -148,7 +150,7 @@
                         android:id="@+id/tv_password_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="2dp"
                         android:text="Password"
                         android:textStyle="bold"
                         android:textColor="#333333"
@@ -161,6 +163,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         app:hintEnabled="false"
+                        app:errorEnabled="true"
                         app:endIconMode="password_toggle">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -177,7 +180,7 @@
                         android:id="@+id/tv_confirm_password_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="2dp"
                         android:text="Confirm Password"
                         android:textStyle="bold"
                         android:textColor="#333333"
@@ -190,6 +193,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         app:hintEnabled="false"
+                        app:errorEnabled="true"
                         app:endIconMode="password_toggle">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -205,7 +209,7 @@
                         android:id="@+id/layout_terms"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="2dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
