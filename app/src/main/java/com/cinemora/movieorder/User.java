@@ -1,43 +1,52 @@
 package com.cinemora.movieorder;
 
-import com.google.firebase.Timestamp;
-
+/**
+ * User model aligned with Firestore 'users' collection schema.
+ * All time fields stored as Unix timestamps (seconds).
+ * All credit fields stored as integers in HKD.
+ */
 public class User {
-    private String uid;
-    private String username;
+    private String userId;                  // Firestore document ID, same as Auth UID
+    private String name;                    // User's display name
     private String email;
-    private int credits;
-    private int totalOrders;
-    private Timestamp createdAt;
+    private String passwordHash;            // Not used for Auth; kept for reference
+    private int earnedCredit;               // Virtual credit balance in HKD, default 0
+    private long createdAt;                 // Unix timestamp in seconds
+    private long updatedAt;                 // Unix timestamp in seconds
 
     public User() {
-        // Required for Firestore
+        // Required for Firestore deserialization
     }
 
-    public User(String uid, String username, String email, int credits, int totalOrders, Timestamp createdAt) {
-        this.uid = uid;
-        this.username = username;
+    public User(String userId, String name, String email, String passwordHash, int earnedCredit, long createdAt, long updatedAt) {
+        this.userId = userId;
+        this.name = name;
         this.email = email;
-        this.credits = credits;
-        this.totalOrders = totalOrders;
+        this.passwordHash = passwordHash;
+        this.earnedCredit = earnedCredit;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    public String getUid() { return uid; }
-    public void setUid(String uid) { this.uid = uid; }
+    // Getters and Setters
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public int getCredits() { return credits; }
-    public void setCredits(int credits) { this.credits = credits; }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-    public int getTotalOrders() { return totalOrders; }
-    public void setTotalOrders(int totalOrders) { this.totalOrders = totalOrders; }
+    public int getEarnedCredit() { return earnedCredit; }
+    public void setEarnedCredit(int earnedCredit) { this.earnedCredit = earnedCredit; }
 
-    public Timestamp getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+    public long getCreatedAt() { return createdAt; }
+    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
+
+    public long getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout navHome, navCart, navOrder, navProfile;
     private ImageView ivHome, ivCart, ivOrder, ivProfile;
     private TextView tvHome, tvCart, tvOrder, tvProfile;
-    
+
     // Fragment instances
     private HomeFragment homeFragment;
     private CartFragment cartFragment;
@@ -34,6 +35,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Seed data on first app launch if version is low
+        if (SeedDataHelper.isSeedRequired(this)) {
+            SeedDataHelper.runReseed(this, new SeedDataHelper.OnSeedCompleteListener() {
+                @Override
+                public void onSuccess(String message) {
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Toast.makeText(MainActivity.this, "Seeding failed: " + message, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
 
         // 初始化元件
         initViews();
@@ -55,7 +71,23 @@ public class MainActivity extends AppCompatActivity {
 
         // Initial Selection
         if (savedInstanceState == null) {
-            selectTab(R.id.nav_home);
+            handleIntentAction(getIntent());
+            if (currentSelectedId == -1) {
+                selectTab(R.id.nav_home);
+            }
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntentAction(intent);
+    }
+
+    private void handleIntentAction(Intent intent) {
+        if (intent != null && "OPEN_ORDERS".equals(intent.getStringExtra("ACTION"))) {
+            selectTab(R.id.nav_order);
         }
     }
 

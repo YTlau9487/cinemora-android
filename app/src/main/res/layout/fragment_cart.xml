@@ -30,6 +30,64 @@
         app:layout_constraintStart_toStartOf="@id/tvCartTitle"
         app:layout_constraintTop_toBottomOf="@id/tvCartTitle" />
 
+    <!-- ================= RecyclerView for Cart Items ================= -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCartItems"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tvCartSubtitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/dividerCredits" />
+
+    <!-- ================= Divider ================= -->
+    <View
+        android:id="@+id/dividerCredits"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        app:layout_constraintBottom_toTopOf="@id/cbUseCredits" />
+
+    <!-- ================= Credits Section ================= -->
+    <CheckBox
+        android:id="@+id/cbUseCredits"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Use my earned credits to pay"
+        android:textColor="@android:color/black"
+        android:textSize="13sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:checked="false"
+        app:layout_constraintBottom_toTopOf="@id/tvCreditsAvailableLabel" />
+
+    <TextView
+        android:id="@+id/tvCreditsAvailableLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Available Credits:"
+        android:textColor="#666666"
+        android:textSize="12sp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/includeBottomBar" />
+
+    <TextView
+        android:id="@+id/tvCreditsAvailable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HK$0"
+        android:textColor="#2196F3"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginStart="4dp"
+        app:layout_constraintStart_toEndOf="@id/tvCreditsAvailableLabel"
+        app:layout_constraintBaseline_toBaselineOf="@id/tvCreditsAvailableLabel" />
+
     <!-- ================= Empty Cart State ================= -->
     <LinearLayout
         android:id="@+id/layoutEmptyCart"
@@ -37,6 +95,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/tvCartSubtitle"
         app:layout_constraintBottom_toTopOf="@+id/includeBottomBar"
         app:layout_constraintStart_toStartOf="parent"

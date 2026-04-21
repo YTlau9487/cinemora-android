@@ -6,13 +6,18 @@ import android.util.Log;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FirebaseManager {
     private static final String TAG = "FirebaseManager";
@@ -55,8 +60,8 @@ public class FirebaseManager {
 
     private void createUserDocument(FirebaseUser firebaseUser, String username, String email, AuthCallback callback) {
         String uid = firebaseUser.getUid();
-        // Fixed: Added default value for totalOrders (0) to match the new User constructor
-        User user = new User(uid, username, email, 0, 0, Timestamp.now());
+        long currentTimestamp = DateUtils.getCurrentTimestamp();
+        User user = new User(uid, username, email, "", 0, currentTimestamp, currentTimestamp);
         
         mFirestore.collection("users").document(uid)
                 .set(user)
@@ -112,73 +117,311 @@ public class FirebaseManager {
                 .addOnFailureListener(e -> listener.onError(e.getMessage()));
     }
 
+    /**
+     * ISSUE 1: Featured Movies - Sort by highest sales count (descending).
+     */
     public void getBestSellingMovies(OnMoviesLoadedListener listener) {
         mFirestore.collection("movies")
-                .whereEqualTo("isBestSelling", true)
+                .orderBy("saleCount", Query.Direction.DESCENDING)
+                .limit(10)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     List<Movie> movies = queryDocumentSnapshots.toObjects(Movie.class);
                     listener.onLoaded(movies);
                 })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error fetching best selling movies: " + e.getMessage());
+                    listener.onError(e.getMessage());
+                });
+    }
+
+    // --- Cart Management ---
+
+    public interface OnCartLoadedListener {
+        void onLoaded(Cart cart);
+        void onError(String message);
+    }
+
+    public interface OnOperationCompleteListener {
+        void onSuccess(String message);
+        void onFailure(String message);
+    }
+
+    public interface OnPurchaseVerifyListener {
+        void onAlreadyOwned();
+        void onNotOwned();
+        void onError(String message);
+    }
+
+    /**
+     * Adds or updates an item in the user's cart.
+     */
+    public void addToCart(String userId, String movieId, String movieName, int cost, int quantity, OnOperationCompleteListener listener) {
+        long currentTimestamp = DateUtils.getCurrentTimestamp();
+        CartItem cartItem = new CartItem(movieId, movieName, cost, quantity, currentTimestamp);
+
+        mFirestore.collection("carts").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    List<CartItem> items = new ArrayList<>();
+                    if (documentSnapshot.exists()) {
+                        // Cart exists - get existing items
+                        Cart cart = documentSnapshot.toObject(Cart.class);
+                        if (cart != null && cart.getItems() != null) {
+                            items = new ArrayList<>(cart.getItems());
+                        }
+                    }
+                    
+                    // Add or update item
+                    boolean found = false;
+                    for (CartItem item : items) {
+                        if (item.getMovieId().equals(movieId)) {
+                            item.setQuantity(quantity);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        items.add(cartItem);
+                    }
+
+                    // Update cart
+                    Map<String, Object> cartData = new HashMap<>();
+                    cartData.put("userId", userId);
+                    cartData.put("items", items);
+                    cartData.put("updatedAt", currentTimestamp);
+                    if (!documentSnapshot.exists()) {
+                        cartData.put("createdAt", currentTimestamp);
+                    }
+
+                    mFirestore.collection("carts").document(userId)
+                            .set(cartData)
+                            .addOnSuccessListener(aVoid -> listener.onSuccess("Item added to cart"))
+                            .addOnFailureListener(e -> listener.onFailure(e.getMessage()));
+                })
+                .addOnFailureListener(e -> listener.onFailure(e.getMessage()));
+    }
+
+    /**
+     * Removes an item from the user's cart by movieId.
+     */
+    public void removeFromCart(String userId, String movieId, OnOperationCompleteListener listener) {
+        mFirestore.collection("carts").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Cart cart = documentSnapshot.toObject(Cart.class);
+                        if (cart != null && cart.getItems() != null) {
+                            // Find and remove the item
+                            CartItem toRemove = null;
+                            for (CartItem item : cart.getItems()) {
+                                if (item.getMovieId().equals(movieId)) {
+                                    toRemove = item;
+                                    break;
+                                }
+                            }
+                            if (toRemove != null) {
+                                cart.getItems().remove(toRemove);
+                                mFirestore.collection("carts").document(userId)
+                                        .update("items", cart.getItems(), "updatedAt", DateUtils.getCurrentTimestamp())
+                                        .addOnSuccessListener(aVoid -> listener.onSuccess("Item removed from cart"))
+                                        .addOnFailureListener(e -> listener.onFailure(e.getMessage()));
+                            } else {
+                                listener.onFailure("Item not found in cart");
+                            }
+                        }
+                    } else {
+                        listener.onFailure("Cart not found");
+                    }
+                })
+                .addOnFailureListener(e -> listener.onFailure(e.getMessage()));
+    }
+
+    /**
+     * Fetches the user's cart.
+     */
+    public void getUserCart(String userId, OnCartLoadedListener listener) {
+        mFirestore.collection("carts").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Cart cart = documentSnapshot.toObject(Cart.class);
+                        listener.onLoaded(cart);
+                    } else {
+                        // Return empty cart if doesn't exist
+                        Cart emptyCart = new Cart(userId, new ArrayList<>(), 0, 0);
+                        listener.onLoaded(emptyCart);
+                    }
+                })
                 .addOnFailureListener(e -> listener.onError(e.getMessage()));
     }
 
-    // --- Seeding Data (Testing Only) ---
+    // --- Order Management ---
+
+    public interface OnOrdersLoadedListener {
+        void onLoaded(List<Order> orders);
+        void onError(String message);
+    }
+
+    public interface OnOrderDetailLoadedListener {
+        void onLoaded(Order order);
+        void onError(String message);
+    }
 
     /**
-     * Seeds sample users sequentially to prevent Auth state collisions.
+     * Fetches all orders for a user, sorted by orderDate descending.
+     * ISSUE 5: Improved logging for missing index detection.
      */
-    public void seedSampleUsers() {
-        // Mary Chan
-        registerUser("mary@example.com", "mary123", "MaryChan", new AuthCallback() {
-            @Override
-            public void onSuccess(FirebaseUser user) {
-                Log.d(TAG, "Mary Chan seeded successfully. Proceeding to John Doe...");
-                mAuth.signOut();
-                
-                // John Doe (Sequential call)
-                registerUser("john@example.com", "john123", "JohnDoe", new AuthCallback() {
-                    @Override
-                    public void onSuccess(FirebaseUser user) {
-                        Log.d(TAG, "John Doe seeded successfully");
-                        mAuth.signOut();
-                    }
-
-                    @Override
-                    public void onFailure(String message) {
-                        Log.e(TAG, "John Doe seeding failed: " + message);
-                    }
+    public void getUserOrders(String userId, OnOrdersLoadedListener listener) {
+        mFirestore.collection("orders")
+                .whereEqualTo("userId", userId)
+                .orderBy("orderDate", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Order> orders = queryDocumentSnapshots.toObjects(Order.class);
+                    listener.onLoaded(orders);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error fetching orders for user " + userId + ": " + e.getMessage());
+                    listener.onError(e.getMessage());
                 });
+    }
+
+    /**
+     * Fetches order details.
+     */
+    public void getOrderDetails(String orderId, OnOrderDetailLoadedListener listener) {
+        mFirestore.collection("orders").document(orderId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Order order = documentSnapshot.toObject(Order.class);
+                    if (order != null) {
+                        listener.onLoaded(order);
+                    }
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    // --- Duplicate Purchase Verification ---
+
+    /**
+     * Checks if user has already purchased a movie.
+     * Returns true if movie exists in any of user's orders.
+     */
+    public void checkUserOwnsMovie(String userId, String movieId, OnPurchaseVerifyListener listener) {
+        mFirestore.collection("orders")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener(ordersSnapshot -> {
+                    final boolean[] isOwned = {false};
+                    for (DocumentSnapshot orderDoc : ordersSnapshot) {
+                        Order order = orderDoc.toObject(Order.class);
+                        if (order != null) {
+                            // Check if this order contains the movieId
+                            orderDoc.getReference().collection("orderItems")
+                                    .whereEqualTo("movieId", movieId)
+                                    .get()
+                                    .addOnSuccessListener(itemsSnapshot -> {
+                                        if (!itemsSnapshot.isEmpty()) {
+                                            listener.onAlreadyOwned();
+                                            isOwned[0] = true;
+                                        }
+                                    });
+                        }
+                    }
+                    if (!isOwned[0]) {
+                        listener.onNotOwned();
+                    }
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    // --- Atomic Checkout Operation ---
+
+    /**
+     * Atomic checkout operation using Firestore transaction.
+     * ISSUE 3: Fixed credit usage logic and summary calculation.
+     */
+    public void checkoutCart(String userId, boolean creditsOpted, OnOrderDetailLoadedListener listener) {
+        mFirestore.runTransaction((Transaction.Function<String>) transaction -> {
+            // 1. Fetch user's cart
+            DocumentSnapshot cartSnapshot = transaction.get(mFirestore.collection("carts").document(userId));
+            Cart cart = cartSnapshot.toObject(Cart.class);
+
+            if (cart == null || cart.getItems() == null || cart.getItems().isEmpty()) {
+                throw new RuntimeException("Cart is empty");
             }
 
-            @Override
-            public void onFailure(String message) {
-                Log.e(TAG, "Mary Chan seeding failed: " + message);
+            // 2. Fetch user's current earnedCredit
+            DocumentSnapshot userSnapshot = transaction.get(mFirestore.collection("users").document(userId));
+            User user = userSnapshot.toObject(User.class);
+            if (user == null) {
+                throw new RuntimeException("User not found");
             }
+
+            // 3. Calculate order totals
+            int subtotal = cart.getCartTotal();
+            int discount = 0; // Default
+            int creditsBefore = user.getEarnedCredit();
+            
+            // Logic Fix: creditsUsed cannot exceed total cost
+            int creditsUsed = (creditsOpted && creditsBefore > 0) ? Math.min(creditsBefore, subtotal) : 0;
+            int totalCost = subtotal - discount - creditsUsed;
+            int creditsAfter = creditsBefore - creditsUsed;
+            long currentTimestamp = DateUtils.getCurrentTimestamp();
+
+            // 4. Create new order
+            String orderId = mFirestore.collection("orders").document().getId();
+            Order newOrder = new Order(
+                    orderId,
+                    userId,
+                    currentTimestamp,
+                    "Completed", // Mark as completed after transaction
+                    cart.getItemCount(),
+                    subtotal,
+                    discount,
+                    totalCost,
+                    creditsBefore,
+                    creditsUsed,
+                    creditsAfter,
+                    currentTimestamp,
+                    currentTimestamp
+            );
+
+            transaction.set(mFirestore.collection("orders").document(orderId), newOrder);
+
+            // 5. Deduct credits if used
+            if (creditsUsed > 0) {
+                transaction.update(
+                        mFirestore.collection("users").document(userId),
+                        "earnedCredit", creditsAfter,
+                        "updatedAt", currentTimestamp
+                );
+            }
+
+            // 6. Clear cart
+            transaction.update(
+                    mFirestore.collection("carts").document(userId),
+                    "items", new ArrayList<>(),
+                    "updatedAt", currentTimestamp
+            );
+
+            return orderId;
+        }).addOnSuccessListener(orderId -> {
+            // Return the created order details
+            getOrderDetails((String) orderId, listener);
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Checkout failed: " + e.getMessage());
+            listener.onError("Checkout failed: " + e.getMessage());
         });
     }
 
-    public void seedSampleMovies(Uri sampleImageUri) {
-        // 1. Upload sample image to Storage
-        StorageReference ref = mStorage.getReference().child("posters/sample_movie.jpg");
-        ref.putFile(sampleImageUri)
-                .addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(uri -> {
-                    String url = uri.toString();
-                    
-                    // 2. Add movies to Firestore
-                    List<Movie> movies = new ArrayList<>();
-                    movies.add(new Movie(null, "Inception", "A thief who steals corporate secrets through the use of dream-sharing technology.", 50.0, "Sci-Fi", url, 4.8f, true, Timestamp.now()));
-                    movies.add(new Movie(null, "The Dark Knight", "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham.", 45.0, "Action", url, 4.9f, true, Timestamp.now()));
-                    movies.add(new Movie(null, "Interstellar", "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.", 40.0, "Sci-Fi", url, 4.7f, false, Timestamp.now()));
-
-                    for (Movie movie : movies) {
-                        mFirestore.collection("movies").add(movie)
-                                .addOnSuccessListener(documentReference -> {
-                                    String id = documentReference.getId();
-                                    documentReference.update("id", id);
-                                });
-                    }
-                }))
-                .addOnFailureListener(e -> Log.e(TAG, "Error seeding movies: " + e.getMessage()));
+    /**
+     * Gets the current authenticated user's ID.
+     * Returns null if no user is logged in.
+     */
+    public String getCurrentUserId() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        return currentUser != null ? currentUser.getUid() : null;
     }
 }

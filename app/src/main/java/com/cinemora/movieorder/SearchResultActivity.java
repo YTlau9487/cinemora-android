@@ -109,7 +109,7 @@ public class SearchResultActivity extends AppCompatActivity {
             
             // Client-side filtering for text query if present
             if (query != null && !query.isEmpty()) {
-                results.removeIf(movie -> !movie.getTitle().toLowerCase().contains(query.toLowerCase()));
+                results.removeIf(movie -> !movie.getMovieName().toLowerCase().contains(query.toLowerCase()));
             }
 
             updateUI(results);

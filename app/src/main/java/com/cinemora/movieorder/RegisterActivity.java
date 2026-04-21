@@ -196,7 +196,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void saveUserToFirestore(String uid, String username, String email) {
-        User user = new User(uid, username, email, 0, 0, Timestamp.now());
+        long currentTimestamp = DateUtils.getCurrentTimestamp();
+        User user = new User(uid, username, email, "", 0, currentTimestamp, currentTimestamp);
 
         mFirestore.collection("users").document(uid)
                 .set(user)

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,7 +27,11 @@ public class HomeFragment extends Fragment {
     private FrameLayout searchBarContainer;
     
     // Header views
-    private TextView tvGreeting, btnSignInHeader, btnProfileHeader;
+    private TextView tvGreeting;
+    private MaterialButton btnSignInHeader, btnProfileHeader;
+
+    // ISSUE: Uncommented Seed Button
+    private MaterialButton btnRunSeed;
 
     private FirebaseManager firebaseManager;
     private boolean isLoaded = false;
@@ -52,6 +57,10 @@ public class HomeFragment extends Fragment {
         btnSignInHeader = view.findViewById(R.id.btn_sign_in_header);
         btnProfileHeader = view.findViewById(R.id.btn_profile_header);
 
+        // ISSUE: Uncommented Seed Button
+        btnRunSeed = view.findViewById(R.id.btn_run_seed);
+        setupSeedButton();
+
         // UI Setup
         setupRecyclerViews();
 
@@ -68,9 +77,6 @@ public class HomeFragment extends Fragment {
         
         // Profile Button Click
         btnProfileHeader.setOnClickListener(v -> {
-            // Since we are using a BottomNavigationView in MainActivity, 
-            // a better way to navigate to the Profile tab is to trigger a selection there.
-            // For now, we'll assume the user wants to go to the Profile tab.
             if (getActivity() instanceof MainActivity) {
                 ((MainActivity) getActivity()).selectTab(R.id.nav_profile);
             }
@@ -80,6 +86,42 @@ public class HomeFragment extends Fragment {
         loadDataIfNeeded();
 
         return view;
+    }
+
+    private void setupSeedButton() {
+        if (btnRunSeed == null) return;
+
+        btnRunSeed.setOnClickListener(v -> {
+            btnRunSeed.setEnabled(false);
+            btnRunSeed.setText("Seeding...");
+
+            SeedDataHelper.runReseed(getContext(), new SeedDataHelper.OnSeedCompleteListener() {
+                @Override
+                public void onSuccess(String message) {
+                    if (isAdded()) {
+                        Toast.makeText(getContext(), "Success: " + message, Toast.LENGTH_LONG).show();
+                        btnRunSeed.setText("Seed Completed (v3)");
+                        
+                        // Force Sign Out so user isn't stuck as Bob
+                        FirebaseAuth.getInstance().signOut();
+                        
+                        // Refresh Home data
+                        isLoaded = false;
+                        loadDataIfNeeded();
+                        setupHeader();
+                    }
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    if (isAdded()) {
+                        Toast.makeText(getContext(), "Error: " + message, Toast.LENGTH_LONG).show();
+                        btnRunSeed.setEnabled(true);
+                        btnRunSeed.setText("Run Seed (v3)");
+                    }
+                }
+            });
+        });
     }
 
     public void loadDataIfNeeded() {
@@ -92,16 +134,14 @@ public class HomeFragment extends Fragment {
     private void setupHeader() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
-            // Logged In State: Hide both buttons for a cleaner look
             btnSignInHeader.setVisibility(View.GONE);
-            btnProfileHeader.setVisibility(View.GONE);
+            btnProfileHeader.setVisibility(View.VISIBLE);
 
-            // Fetch extra profile data (username)
             firebaseManager.getUserData(currentUser.getUid(), new FirebaseManager.OnUserDataLoadedListener() {
                 @Override
                 public void onLoaded(User user) {
                     if (user != null && isAdded()) {
-                        tvGreeting.setText("Hi, " + user.getUsername());
+                        tvGreeting.setText("Hi, " + user.getName());
                     }
                 }
 
@@ -111,7 +151,6 @@ public class HomeFragment extends Fragment {
                 }
             });
         } else {
-            // Logged Out State: Show Sign In button
             tvGreeting.setText("Hi, Guest");
             btnSignInHeader.setVisibility(View.VISIBLE);
             btnProfileHeader.setVisibility(View.GONE);
@@ -129,7 +168,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadMovies() {
-        // 1. Load Bestselling Movies
         firebaseManager.getBestSellingMovies(new FirebaseManager.OnMoviesLoadedListener() {
             @Override
             public void onLoaded(List<Movie> movies) {
@@ -143,7 +181,6 @@ public class HomeFragment extends Fragment {
             public void onError(String message) {}
         });
 
-        // 2. Load All/Recommended Movies
         firebaseManager.getAllMovies(new FirebaseManager.OnMoviesLoadedListener() {
             @Override
             public void onLoaded(List<Movie> movies) {
