@@ -48,9 +48,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Video Player -->
-            <VideoView
-                android:id="@+id/videoPlayer"
+            <!-- Video Player Replacement -->
+            <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                android:id="@+id/youtubePlayerView"
                 android:layout_width="match_parent"
                 android:layout_height="250dp" />
 

@@ -5,16 +5,12 @@ plugins {
 
 android {
     namespace = "com.cinemora.movieorder"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.cinemora.movieorder"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -52,6 +48,9 @@ dependencies {
     
     // Glide for image loading
     implementation(libs.glide)
+
+    // Android YouTube Player
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

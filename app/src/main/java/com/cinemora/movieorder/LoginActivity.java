@@ -190,11 +190,11 @@ public class LoginActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         User user = documentSnapshot.toObject(User.class);
                         if (user != null) {
-                            Toast.makeText(LoginActivity.this, "Welcome " + user.getUsername() + "!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Welcome " + user.getName() + "!", Toast.LENGTH_SHORT).show();
                             
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("username", user.getUsername());
-                            intent.putExtra("credits", user.getCredits());
+                            intent.putExtra("username", user.getName());
+                            intent.putExtra("credits", user.getEarnedCredit());
                             
                             startActivity(intent);
                             finish();

@@ -101,8 +101,8 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onLoaded(User user) {
                     if (user != null && isAdded()) {
-                        tvProfileName.setText(user.getUsername());
-                        tvProfileCredit.setText(user.getCredits() + " pts");
+                        tvProfileName.setText(user.getName());
+                        tvProfileCredit.setText(user.getEarnedCredit() + " pts");
                     }
                 }
 

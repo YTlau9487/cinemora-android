@@ -36,9 +36,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         Movie movie = movieList.get(position);
-        holder.tvTitle.setText(movie.getTitle());
+        holder.tvTitle.setText(movie.getMovieName());
         holder.tvRating.setText(String.valueOf(movie.getRating()));
-        holder.tvPrice.setText("HKD " + movie.getPrice());
+        holder.tvPrice.setText(DateUtils.formatCurrency(movie.getCost()));
 
         // Use Glide for image loading
         Glide.with(context)
