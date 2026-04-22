@@ -1,59 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="130dp"
-    android:layout_marginBottom="12dp"
-    app:cardCornerRadius="18dp"
-    app:cardElevation="3dp"
-    app:cardUseCompatPadding="true">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="14dp"
+    android:layout_marginEnd="14dp"
+    android:layout_marginTop="4dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="3dp">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/white">
 
-        <!-- Main row content -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingStart="14dp"
-            android:paddingTop="14dp"
-            android:paddingEnd="70dp"
-            android:paddingBottom="14dp">
+            android:paddingStart="12dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="65dp"
+            android:paddingBottom="10dp">
 
-            <!-- Poster -->
+            <!-- Compact poster dimensions for a more professional list feel -->
             <ImageView
                 android:id="@+id/imgMoviePoster"
-                android:layout_width="90dp"
+                android:layout_width="85dp"
                 android:layout_height="90dp"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/ic_launcher" />
 
-            <!-- Text area -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="14dp"
+                android:layout_marginStart="16dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvMovieTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Star War"
+                    android:minHeight="38dp"
+                    android:text="Movie Title"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="2" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="2dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
@@ -62,31 +64,31 @@
                         android:layout_height="wrap_content"
                         android:text="⭐"
                         android:textColor="#FFC107"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/tvMovieRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="4.8"
+                        android:text="0.0"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvMoviePrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:text="HKD 60"
+                    android:layout_marginTop="4dp"
+                    android:text="HKD 0"
                     android:textColor="#12CFC2"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Mint add area attached to right bottom corner -->
+        <!-- Balanced button size to fit the compact row -->
         <FrameLayout
             android:id="@+id/btnAddMovie"
             android:layout_width="48dp"
@@ -97,13 +99,12 @@
             android:focusable="true">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:src="@drawable/add_to_cart_mini"
                 android:contentDescription="Add to cart" />
         </FrameLayout>
 
     </FrameLayout>
-
 </androidx.cardview.widget.CardView>

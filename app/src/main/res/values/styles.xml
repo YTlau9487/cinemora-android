@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="GenreChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="android:textColor">@color/white</item>
+        <item name="chipBackgroundColor">@color/blue_primary</item>
+        <item name="chipStrokeColor">@color/blue_primary</item>
+    </style>
+</resources>

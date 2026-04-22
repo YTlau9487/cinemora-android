@@ -31,45 +31,63 @@
         app:layout_constraintStart_toStartOf="@id/tvOrderTitle"
         app:layout_constraintTop_toBottomOf="@id/tvOrderTitle" />
 
-    <!-- Orders RecyclerView -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvOrders"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/tvOrderSubtitle"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <!-- Empty state -->
-    <LinearLayout
-        android:id="@+id/layoutEmptyOrders"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/tvOrderSubtitle"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imgEmptyOrder"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/ic_no_order"
-            android:contentDescription="No order icon"
-            app:tint="#9E9E9E" />
+            <!-- Orders RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvOrders"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-        <TextView
-            android:id="@+id/tvEmptyOrders"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="There are no order yet"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
-    </LinearLayout>
+            <!-- Empty state (Consistent with fragment_cart.xml) -->
+            <LinearLayout
+                android:id="@+id/layoutEmptyOrders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/imgEmptyOrder"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:src="@drawable/ic_no_order"
+                    android:contentDescription="No order icon"
+                    app:tint="#9E9E9E" />
+
+                <TextView
+                    android:id="@+id/tvEmptyOrdersTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:text="No orders yet!"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvEmptyOrders"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Your purchase history will appear here"
+                    android:textColor="#9E9E9E"
+                    android:textSize="13sp"
+                    android:gravity="center" />
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -69,7 +69,6 @@
                     app:strokeWidth="1dp"
                     tools:src="@tools:sample/avatars" />
 
-                <!-- Refined camera badge: Balanced White Surface + Blue Icon -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/badgeCamera"
                     android:layout_width="28dp"
@@ -177,40 +176,6 @@
                         android:inputType="textEmailAddress"
                         android:paddingVertical="14dp"
                         android:text="@string/placeholder_email"
-                        android:textColor="#333333"
-                        android:textSize="15sp" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Phone Number -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/phone_number"
-                    android:textColor="#999999"
-                    android:textSize="12sp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="8dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilPhone"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:boxStrokeColor="#12BFE6"
-                    app:hintEnabled="false"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxStrokeWidth="1dp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etPhone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="phone"
-                        android:paddingVertical="14dp"
-                        android:text="+1 234 567 890"
                         android:textColor="#333333"
                         android:textSize="15sp" />
                 </com.google.android.material.textfield.TextInputLayout>

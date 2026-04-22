@@ -2,7 +2,6 @@ package com.cinemora.movieorder;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,14 +20,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageView ivHome, ivCart, ivOrder, ivProfile;
     private TextView tvHome, tvCart, tvOrder, tvProfile;
 
-    // Fragment instances
     private HomeFragment homeFragment;
     private CartFragment cartFragment;
     private OrderFragment orderFragment;
     private ProfileFragment profileFragment;
     private Fragment activeFragment;
 
-    // To keep track of the currently active tab ID
     private int currentSelectedId = -1;
 
     @Override
@@ -36,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Seed data on first app launch if version is low
         if (SeedDataHelper.isSeedRequired(this)) {
             SeedDataHelper.runReseed(this, new SeedDataHelper.OnSeedCompleteListener() {
                 @Override
@@ -51,25 +47,33 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        // 初始化元件
         initViews();
         initFragments();
 
-        // 設定點擊事件
         navHome.setOnClickListener(v -> selectTab(R.id.nav_home));
         navCart.setOnClickListener(v -> selectTab(R.id.nav_cart));
         navOrder.setOnClickListener(v -> selectTab(R.id.nav_order));
         
-        // Profile tab with login protection
+        // Task 5: Auth Guard - Profile Tab Redirect with Dialog
         navProfile.setOnClickListener(v -> {
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                 selectTab(R.id.nav_profile);
             } else {
-                showLoginRequiredDialog();
+                DialogHelper.showConfirmationDialog(
+                        this,
+                        "Sign In Required",
+                        "Please sign in to access your profile, order history, and credits.",
+                        "Sign In",
+                        "Cancel",
+                        () -> {
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        },
+                        null
+                );
             }
         });
 
-        // Initial Selection
         if (savedInstanceState == null) {
             handleIntentAction(getIntent());
             if (currentSelectedId == -1) {
@@ -97,29 +101,13 @@ public class MainActivity extends AppCompatActivity {
         orderFragment = new OrderFragment();
         profileFragment = new ProfileFragment();
 
-        // Add all fragments once and hide them
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().add(R.id.fragment_container, profileFragment, "4").hide(profileFragment).commit();
         fm.beginTransaction().add(R.id.fragment_container, orderFragment, "3").hide(orderFragment).commit();
         fm.beginTransaction().add(R.id.fragment_container, cartFragment, "2").hide(cartFragment).commit();
-        fm.beginTransaction().add(R.id.fragment_container, homeFragment, "1").commit(); // Home visible by default
+        fm.beginTransaction().add(R.id.fragment_container, homeFragment, "1").commit();
         
         activeFragment = homeFragment;
-    }
-
-    private void showLoginRequiredDialog() {
-        DialogHelper.showConfirmationDialog(
-                this,
-                "Sign In Required",
-                "You need to sign in to view your profile.",
-                "Sign In",
-                "Cancel",
-                () -> {
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                },
-                null
-        );
     }
 
     private void initViews() {
@@ -140,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void selectTab(int id) {
-        // 1. Ignore if same tab selected
         if (id == currentSelectedId) return;
 
         Fragment targetFragment;
@@ -150,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
         else if (id == R.id.nav_profile) targetFragment = profileFragment;
         else return;
 
-        // 2. Show/Hide fragments
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         if (activeFragment != null) {
             ft.hide(activeFragment);
@@ -158,10 +144,8 @@ public class MainActivity extends AppCompatActivity {
         ft.show(targetFragment).commit();
         activeFragment = targetFragment;
 
-        // 3. Trigger data load if needed (using the flag we added to fragments)
         triggerLoadData(targetFragment);
 
-        // 4. Update UI visuals
         currentSelectedId = id;
         updateTabUI(id);
     }
@@ -193,8 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void resetTabs() {
-        int inactiveColor = 0xFF222222; // 深灰色
-        
+        int inactiveColor = 0xFF222222;
         ivHome.setColorFilter(inactiveColor);
         tvHome.setTextColor(inactiveColor);
         ivCart.setColorFilter(inactiveColor);

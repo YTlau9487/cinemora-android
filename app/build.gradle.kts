@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.swiperefreshlayout)
 
     // Firebase BoM
     implementation(platform(libs.firebase.bom))
@@ -48,6 +49,9 @@ dependencies {
     
     // Glide for image loading
     implementation(libs.glide)
+
+    // Gson for Local Cart
+    implementation(libs.gson)
 
     // Android YouTube Player
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
