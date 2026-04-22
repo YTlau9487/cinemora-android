@@ -15,41 +15,37 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * Fragment representing the user's profile page.
- * Handles display of user information and navigation to account settings.
- */
 public class ProfileFragment extends Fragment {
 
-    private TextView tvProfileName, tvProfileEmail, tvProfileCredit;
+    private TextView tvProfileName, tvProfileEmail, tvProfileCredit, tvProfileOrders;
     private MaterialButton btnEditProfile, btnLogout;
     private FirebaseManager firebaseManager;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private boolean isLoaded = false;
 
     public ProfileFragment() {
-        // Required empty public constructor
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         firebaseManager = new FirebaseManager();
 
-        // Initialize UI components
         tvProfileName = view.findViewById(R.id.tvProfileName);
         tvProfileEmail = view.findViewById(R.id.tvProfileEmail);
         tvProfileCredit = view.findViewById(R.id.tvProfileCredit);
+        tvProfileOrders = view.findViewById(R.id.tvProfileOrders);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         btnLogout = view.findViewById(R.id.btnLogout);
 
-        // Handle navigation to EditProfileActivity
         if (btnEditProfile != null) {
             btnEditProfile.setOnClickListener(v -> {
                 Intent intent = new Intent(getActivity(), EditProfileActivity.class);
@@ -57,7 +53,6 @@ public class ProfileFragment extends Fragment {
             });
         }
 
-        // Handle Logout
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> {
                 DialogHelper.showConfirmationDialog(
@@ -69,7 +64,6 @@ public class ProfileFragment extends Fragment {
                         () -> {
                             mAuth.signOut();
                             Toast.makeText(getActivity(), "Logged out", Toast.LENGTH_SHORT).show();
-                            // Navigate to LoginActivity and clear backstack
                             Intent intent = new Intent(getActivity(), LoginActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
@@ -80,14 +74,12 @@ public class ProfileFragment extends Fragment {
         }
 
         loadDataIfNeeded();
-
         return view;
     }
 
     public void loadDataIfNeeded() {
-        if (!isLoaded && tvProfileName != null) {
+        if (tvProfileName != null) {
             setupUI();
-            isLoaded = true;
         }
     }
 
@@ -96,7 +88,6 @@ public class ProfileFragment extends Fragment {
         if (currentUser != null) {
             tvProfileEmail.setText(currentUser.getEmail());
             
-            // Load more data from Firestore
             firebaseManager.getUserData(currentUser.getUid(), new FirebaseManager.OnUserDataLoadedListener() {
                 @Override
                 public void onLoaded(User user) {
@@ -113,6 +104,23 @@ public class ProfileFragment extends Fragment {
                     }
                 }
             });
+
+            // Task 3: Profile Stats - Count actual orders
+            db.collection("orders")
+                    .whereEqualTo("userId", currentUser.getUid())
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (isAdded()) {
+                            int count = queryDocumentSnapshots.size();
+                            tvProfileOrders.setText(String.valueOf(count));
+                        }
+                    });
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setupUI();
     }
 }

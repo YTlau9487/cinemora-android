@@ -1,5 +1,6 @@
 package com.cinemora.movieorder;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +39,22 @@ public class OrderDetailItemAdapter extends RecyclerView.Adapter<OrderDetailItem
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CartItem item = items.get(position);
         holder.tvMovieName.setText(item.getMovieName());
-        holder.tvMovieCost.setText("HKD " + item.getCost());
+        holder.tvMovieCost.setText(DateUtils.formatCurrency(item.getCost()));
 
-        // Assuming you have a way to get posterUrl, possibly by fetching movie details or storing it in CartItem
-        // For now, if CartItem doesn't have it, we might need a placeholder or update CartItem
-        // Glide.with(holder.itemView.getContext()).load(item.getPosterUrl()).into(holder.ivMoviePoster);
+        Glide.with(holder.itemView.getContext())
+                .load(item.getPosterUrl())
+                .placeholder(R.mipmap.ic_launcher)
+                .error(R.mipmap.ic_launcher)
+                .into(holder.ivMoviePoster);
+
+        // Simulated Portal: open ViewMovieActivity
+        holder.btnViewMovie.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), ViewMovieActivity.class);
+            intent.putExtra("MOVIE_ID", item.getMovieId());
+            intent.putExtra("MOVIE_NAME", item.getMovieName());
+            intent.putExtra("POSTER_URL", item.getPosterUrl());
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
@@ -52,12 +65,14 @@ public class OrderDetailItemAdapter extends RecyclerView.Adapter<OrderDetailItem
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivMoviePoster;
         TextView tvMovieName, tvMovieCost;
+        MaterialButton btnViewMovie;
 
         ViewHolder(View itemView) {
             super(itemView);
             ivMoviePoster = itemView.findViewById(R.id.ivMoviePoster);
             tvMovieName = itemView.findViewById(R.id.tvMovieName);
             tvMovieCost = itemView.findViewById(R.id.tvMovieCost);
+            btnViewMovie = itemView.findViewById(R.id.btnViewMovie);
         }
     }
 }

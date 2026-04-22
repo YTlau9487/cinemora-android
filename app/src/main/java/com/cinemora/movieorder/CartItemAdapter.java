@@ -4,17 +4,16 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
-/**
- * RecyclerView adapter for cart items.
- * Displays movie items in the cart with quantity and price information.
- */
 public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.CartItemViewHolder> {
 
     private List<CartItem> cartItems;
@@ -45,8 +44,15 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.CartIt
 
         holder.tvMovieName.setText(item.getMovieName());
         holder.tvPrice.setText(DateUtils.formatCurrency(item.getCost()));
-        holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+        holder.tvQuantity.setText("x" + item.getQuantity());
         holder.tvItemTotal.setText(DateUtils.formatCurrency(item.getItemTotal()));
+
+        // Fix Thumbnail issue in Cart
+        Glide.with(context)
+                .load(item.getPosterUrl())
+                .placeholder(R.mipmap.ic_launcher)
+                .error(R.mipmap.ic_launcher)
+                .into(holder.imgCartPoster);
 
         holder.btnRemove.setOnClickListener(v -> {
             if (listener != null) {
@@ -61,14 +67,12 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.CartIt
     }
 
     public static class CartItemViewHolder extends RecyclerView.ViewHolder {
-        TextView tvMovieName;
-        TextView tvPrice;
-        TextView tvQuantity;
-        TextView tvItemTotal;
-        TextView btnRemove;
+        ImageView imgCartPoster;
+        TextView tvMovieName, tvPrice, tvQuantity, tvItemTotal, btnRemove;
 
         public CartItemViewHolder(@NonNull View itemView) {
             super(itemView);
+            imgCartPoster = itemView.findViewById(R.id.imgCartPoster);
             tvMovieName = itemView.findViewById(R.id.tvMovieName);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvQuantity = itemView.findViewById(R.id.tvQuantity);

@@ -1,6 +1,8 @@
 package com.cinemora.movieorder;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,7 +14,7 @@ public class Movie {
     private String id;                      // Firestore document ID
     private String movieName;               // Display name
     private int cost;                       // Unit cost in HKD (integer)
-    private int rating;                     // Range: 0-5
+    private double rating;                  // Range: 0-5
     private List<String> genres;            // e.g., ["Action", "Adventure"]
     private int duration;                   // Minutes
     private long releaseDate;               // Unix timestamp in seconds
@@ -34,7 +36,7 @@ public class Movie {
         this.subtitles = new ArrayList<>();
     }
 
-    public Movie(String id, String movieName, int cost, int rating, List<String> genres,
+    public Movie(String id, String movieName, int cost, double rating, List<String> genres,
                  int duration, long releaseDate, String overview, String director,
                  List<String> cast, String language, List<String> subtitles, String resolution,
                  int saleCount, String posterUrl, long createdAt, long updatedAt) {
@@ -67,8 +69,8 @@ public class Movie {
     public int getCost() { return cost; }
     public void setCost(int cost) { this.cost = cost; }
 
-    public int getRating() { return rating; }
-    public void setRating(int rating) { this.rating = rating; }
+    public double getRating() { return rating; }
+    public void setRating(double rating) { this.rating = rating; }
 
     public List<String> getGenres() { return genres; }
     public void setGenres(List<String> genres) { this.genres = genres; }
@@ -108,6 +110,14 @@ public class Movie {
 
     public long getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
+
+    // Task Refinement: Add helper to get year for sorting/filtering
+    public int getReleaseYear() {
+        if (releaseDate == 0) return 0;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date(releaseDate * 1000));
+        return cal.get(Calendar.YEAR);
+    }
 
     // Utility methods for display
     public String getGenresString() {

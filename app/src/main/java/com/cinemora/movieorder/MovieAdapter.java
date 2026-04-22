@@ -5,24 +5,45 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
     private List<Movie> movieList;
     private Context context;
     private boolean isFeatured;
+    private Set<String> ownedMovieIds = new HashSet<>();
+    private Set<String> cartMovieIds = new HashSet<>();
 
     public MovieAdapter(Context context, List<Movie> movieList, boolean isFeatured) {
         this.context = context;
         this.movieList = movieList;
         this.isFeatured = isFeatured;
+    }
+
+    /**
+     * Updates the set of owned movie IDs to enforce purchase restrictions.
+     */
+    public void setOwnedMovieIds(Set<String> ownedMovieIds) {
+        this.ownedMovieIds = ownedMovieIds != null ? ownedMovieIds : new HashSet<>();
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Updates the set of movie IDs currently in the cart to prevent duplicate additions.
+     */
+    public void setCartMovieIds(Set<String> cartMovieIds) {
+        this.cartMovieIds = cartMovieIds != null ? cartMovieIds : new HashSet<>();
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -37,10 +58,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         Movie movie = movieList.get(position);
         holder.tvTitle.setText(movie.getMovieName());
-        holder.tvRating.setText(String.valueOf(movie.getRating()));
-        holder.tvPrice.setText(DateUtils.formatCurrency(movie.getCost()));
+        
+        holder.tvRating.setText(String.format(Locale.US, "%.1f", (double) movie.getRating()));
+        holder.tvPrice.setText(String.format(Locale.getDefault(), "HKD %d", movie.getCost()));
 
-        // Use Glide for image loading
         Glide.with(context)
                 .load(movie.getPosterUrl())
                 .placeholder(R.mipmap.ic_launcher)
@@ -52,12 +73,40 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             context.startActivity(intent);
         });
 
-        // Add to cart logic (Placeholder for now)
         View btnAdd = holder.itemView.findViewById(isFeatured ? R.id.btnAddFeatured : R.id.btnAddMovie);
         if (btnAdd != null) {
-            btnAdd.setOnClickListener(v -> {
-                // Implement cart logic
-            });
+            // Task: Purchase & Cart Restriction Logic
+            boolean isOwned = ownedMovieIds.contains(movie.getId());
+            boolean isInCart = cartMovieIds.contains(movie.getId());
+            
+            if (isOwned || isInCart) {
+                // Task Refinement: Make the button completely invisible if already bought or in cart
+                btnAdd.setVisibility(View.GONE);
+                btnAdd.setOnClickListener(null);
+            } else {
+                btnAdd.setVisibility(View.VISIBLE);
+                btnAdd.setEnabled(true);
+                btnAdd.setAlpha(1.0f);
+                
+                btnAdd.setOnClickListener(v -> {
+                    btnAdd.setEnabled(false);
+                    CartItem item = new CartItem(
+                            movie.getId(),
+                            movie.getMovieName(),
+                            movie.getPosterUrl(),
+                            movie.getCost(),
+                            1,
+                            System.currentTimeMillis() / 1000
+                    );
+                    CartManager.getInstance(context).addToCart(item);
+                    
+                    // Update local state and UI immediately
+                    cartMovieIds.add(movie.getId());
+                    btnAdd.setVisibility(View.GONE);
+                    
+                    Toast.makeText(context, "Added to cart!", Toast.LENGTH_SHORT).show();
+                });
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText emailInput, passwordInput;
     private Button btnLogin;
     private TextView tvSignUp;
+    private View layoutBack;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
@@ -57,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.password_input);
         btnLogin = findViewById(R.id.btn_login);
         tvSignUp = findViewById(R.id.tv_signup);
+        layoutBack = findViewById(R.id.layoutBack);
 
         setupTextWatchers();
 
@@ -66,6 +69,10 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             finish();
         });
+
+        if (layoutBack != null) {
+            layoutBack.setOnClickListener(v -> finish());
+        }
     }
 
     private void setupTextWatchers() {
@@ -191,11 +198,11 @@ public class LoginActivity extends AppCompatActivity {
                         User user = documentSnapshot.toObject(User.class);
                         if (user != null) {
                             Toast.makeText(LoginActivity.this, "Welcome " + user.getName() + "!", Toast.LENGTH_SHORT).show();
-                            
+
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("username", user.getName());
                             intent.putExtra("credits", user.getEarnedCredit());
-                            
+
                             startActivity(intent);
                             finish();
                         }

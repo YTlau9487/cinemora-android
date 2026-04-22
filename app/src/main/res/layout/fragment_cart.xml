@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#F7F7FB">
 
-    <!-- ================= Top Title Section ================= -->
+    <!-- Top Title Section -->
     <TextView
         android:id="@+id/tvCartTitle"
         android:layout_width="wrap_content"
@@ -30,65 +30,86 @@
         app:layout_constraintStart_toStartOf="@id/tvCartTitle"
         app:layout_constraintTop_toBottomOf="@id/tvCartTitle" />
 
-    <!-- ================= RecyclerView for Cart Items ================= -->
+    <!-- RecyclerView for Cart Items -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCartItems"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/tvCartSubtitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/dividerCredits" />
+        app:layout_constraintBottom_toTopOf="@id/cardCreditsSection" />
 
-    <!-- ================= Divider ================= -->
-    <View
-        android:id="@+id/dividerCredits"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#E0E0E0"
-        app:layout_constraintBottom_toTopOf="@id/cbUseCredits" />
-
-    <!-- ================= Credits Section ================= -->
-    <CheckBox
-        android:id="@+id/cbUseCredits"
+    <!-- Optimized Credits Section (Consistent with Payment Bar) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardCreditsSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Use my earned credits to pay"
-        android:textColor="@android:color/black"
-        android:textSize="13sp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:checked="false"
-        app:layout_constraintBottom_toTopOf="@id/tvCreditsAvailableLabel" />
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:strokeColor="#F0F0F0"
+        app:strokeWidth="1dp"
+        app:layout_constraintBottom_toTopOf="@id/includeBottomBar">
 
-    <TextView
-        android:id="@+id/tvCreditsAvailableLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Available Credits:"
-        android:textColor="#666666"
-        android:textSize="12sp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/includeBottomBar" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/tvCreditsAvailable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="HK$0"
-        android:textColor="#2196F3"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_marginStart="4dp"
-        app:layout_constraintStart_toEndOf="@id/tvCreditsAvailableLabel"
-        app:layout_constraintBaseline_toBaselineOf="@id/tvCreditsAvailableLabel" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-    <!-- ================= Empty Cart State ================= -->
+                <TextView
+                    android:id="@+id/tvCreditsAvailableLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Available Credits"
+                    android:textColor="#8A8A8A"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvCreditsAvailable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HK$0"
+                    android:textColor="#2196F3"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="32dp"
+                android:background="#EEEEEE"
+                android:layout_marginHorizontal="16dp"/>
+
+            <!-- Refined Checkbox for visibility and state coloring -->
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbUseCredits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Apply to total"
+                android:textColor="#444444"
+                android:textSize="13sp"
+                android:checked="false"
+                app:useMaterialThemeColors="false"
+                app:checkedIconTint="@android:color/white"
+                app:buttonTint="@color/checkbox_tint_selector" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Empty Cart State -->
     <LinearLayout
         android:id="@+id/layoutEmptyCart"
         android:layout_width="wrap_content"
@@ -127,7 +148,7 @@
             android:textSize="13sp" />
     </LinearLayout>
 
-    <!-- ================= Bottom Checkout Bar ================= -->
+    <!-- Bottom Checkout Bar -->
     <include
         android:id="@+id/includeBottomBar"
         layout="@layout/layout_checkout_bar"
