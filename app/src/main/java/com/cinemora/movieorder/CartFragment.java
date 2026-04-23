@@ -43,6 +43,7 @@ public class CartFragment extends Fragment implements CartItemAdapter.OnCartItem
     private View includeBottomBar;
     
     private int userCredits = 0;
+    private boolean isCheckingOut = false;
 
     public CartFragment() {
     }
@@ -73,6 +74,8 @@ public class CartFragment extends Fragment implements CartItemAdapter.OnCartItem
 
         if (btnCheckout != null) {
             btnCheckout.setOnClickListener(v -> {
+                if (isCheckingOut) return;
+
                 if (mAuth.getCurrentUser() != null) {
                     showConfirmationDialog();
                 } else {
@@ -184,9 +187,11 @@ public class CartFragment extends Fragment implements CartItemAdapter.OnCartItem
         tvAfterPurchaseCredit.setText(message);
         
         if (cartItems != null && !cartItems.isEmpty()) {
-            btnCheckout.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#12CFC2")));
-            btnCheckout.setEnabled(true);
-            btnCheckout.setAlpha(1.0f);
+            if (!isCheckingOut) {
+                btnCheckout.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#12CFC2")));
+                btnCheckout.setEnabled(true);
+                btnCheckout.setAlpha(1.0f);
+            }
         } else {
             btnCheckout.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#CCCCCC")));
             btnCheckout.setEnabled(false);
@@ -222,19 +227,23 @@ public class CartFragment extends Fragment implements CartItemAdapter.OnCartItem
             return;
         }
 
+        isCheckingOut = true;
         btnCheckout.setEnabled(false);
         btnCheckout.setText("Processing...");
+        btnCheckout.setAlpha(0.6f);
 
         firebaseManager.processCheckout(currentUser.getUid(), cartItems, cbUseCredits.isChecked(), new FirebaseManager.OnOrderDetailLoadedListener() {
             @Override
             public void onLoaded(Order order) {
                 if (isAdded()) {
+                    isCheckingOut = false;
                     cartManager.clearCart();
                     Intent intent = new Intent(getActivity(), CheckoutSummaryActivity.class);
                     intent.putExtra("orderId", order.getOrderId());
                     startActivity(intent);
                     btnCheckout.setText("Checkout");
                     btnCheckout.setEnabled(true);
+                    btnCheckout.setAlpha(1.0f);
                     loadDataIfNeeded();
                 }
             }
@@ -242,8 +251,10 @@ public class CartFragment extends Fragment implements CartItemAdapter.OnCartItem
             @Override
             public void onError(String message) {
                 if (isAdded()) {
+                    isCheckingOut = false;
                     btnCheckout.setEnabled(true);
                     btnCheckout.setText("Checkout");
+                    btnCheckout.setAlpha(1.0f);
                     Toast.makeText(getContext(), "Error: " + message, Toast.LENGTH_LONG).show();
                 }
             }
@@ -252,6 +263,7 @@ public class CartFragment extends Fragment implements CartItemAdapter.OnCartItem
 
     @Override
     public void onRemoveItem(String movieId) {
+        if (isCheckingOut) return;
         cartManager.removeItem(movieId);
         loadDataIfNeeded();
     }
