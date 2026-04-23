@@ -2,6 +2,7 @@ package com.cinemora.movieorder;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +26,8 @@ public class OrderDetailActivity extends AppCompatActivity {
     private OrderDetailItemAdapter itemAdapter;
     private MaterialToolbar toolbar;
     private RecyclerView rvItems;
-    private TextView tvSubtotalValue, tvDiscountValue, tvTotalValue;
-    private TextView tvCreditsBeforeValue, tvCreditsUsedValue, tvCreditsAfterValue;
+    private TextView tvSubtotalValue, tvDiscountValue, tvTotalValue, tvMortgageStatus;
+    private TextView tvCreditsBeforeValue, tvCreditsUsedValue, tvCreditsAfterValue, tvEarnedCreditValue;
     private TextView tvStatusTitle, tvStatusDesc;
     private FirebaseFirestore db;
 
@@ -61,9 +62,13 @@ public class OrderDetailActivity extends AppCompatActivity {
         tvSubtotalValue = findViewById(R.id.SubtotalValue);
         tvDiscountValue = findViewById(R.id.DiscountValue);
         tvTotalValue = findViewById(R.id.TotalValue);
+        tvMortgageStatus = findViewById(R.id.tvMortgageStatus);
+        
         tvCreditsBeforeValue = findViewById(R.id.CreditsBeforeValue);
         tvCreditsUsedValue = findViewById(R.id.CreditsUsedValue);
         tvCreditsAfterValue = findViewById(R.id.CreditsAfterValue);
+        tvEarnedCreditValue = findViewById(R.id.EarnedCreditValue);
+        
         tvStatusTitle = findViewById(R.id.StatusTitle);
         tvStatusDesc = findViewById(R.id.StatusDesc);
     }
@@ -73,7 +78,6 @@ public class OrderDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentSnapshot -> {
                     Order order = documentSnapshot.toObject(Order.class);
                     if (order != null) {
-                        // Fix for Task 3: Data Binding for #Order Num and Date
                         String dateStr = DateUtils.formatOrderDate(order.getOrderDate());
                         toolbar.setSubtitle("Order #" + orderId.substring(0, 8).toUpperCase() + " • " + dateStr);
 
@@ -81,9 +85,25 @@ public class OrderDetailActivity extends AppCompatActivity {
                         tvDiscountValue.setText(String.format(Locale.US, "- HKD %d", order.getDiscount()));
                         tvTotalValue.setText(String.format(Locale.US, "HKD %d", order.getTotalCost()));
 
+                        // Calculate Earned Credit (based on subtotal, matched with checkout logic)
+                        int earnedCredit = (int) Math.ceil(order.getSubtotal() / 10.0);
+                        tvEarnedCreditValue.setText("+ " + earnedCredit + " pts");
+
                         tvCreditsBeforeValue.setText(order.getCreditsBefore() + " pts");
                         tvCreditsUsedValue.setText("- " + order.getCreditsUsed() + " pts");
                         tvCreditsAfterValue.setText(order.getCreditsAfter() + " pts");
+
+                        // Explicit Mortgage Messaging
+                        if (order.getCreditsUsed() > 0) {
+                            tvMortgageStatus.setVisibility(View.VISIBLE);
+                            if (order.getTotalCost() == 0) {
+                                tvMortgageStatus.setText("Fully paid with credits");
+                            } else {
+                                tvMortgageStatus.setText("Partially paid with " + order.getCreditsUsed() + " credits");
+                            }
+                        } else {
+                            tvMortgageStatus.setVisibility(View.GONE);
+                        }
 
                         tvStatusTitle.setText("Order " + order.getProgress());
                         tvStatusDesc.setText("Your order progress: " + order.getProgress());

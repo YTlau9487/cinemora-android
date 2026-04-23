@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -110,11 +112,7 @@ public class SearchActivity extends AppCompatActivity {
                 chip.setTextColor(textStateList);
                 chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     if (!isInternalUpdating) {
-                        if (isChecked) {
-                            updateSearchInputWithFilter("genre", chip.getText().toString().toLowerCase());
-                        } else {
-                            removeFilterFromSearchInput("genre", chip.getText().toString().toLowerCase());
-                        }
+                        updateSearchInputFromFilters();
                     }
                     updateFilterSummary();
                 });
@@ -168,12 +166,8 @@ public class SearchActivity extends AppCompatActivity {
         spinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selected = spinnerYear.getSelectedItem().toString();
                 if (!isInternalUpdating) {
-                    // Task: Professional year tag
-                    String tagValue = selected;
-                    if (selected.equals("Before 2020")) tagValue = "<2020";
-                    updateSearchInputWithFilter("year", selected.equals("All Years") ? "" : tagValue);
+                    updateSearchInputFromFilters();
                 }
                 updateFilterSummary();
             }
@@ -189,7 +183,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!isInternalUpdating) {
-                    updateSearchInputWithFilter("director", s.toString().toLowerCase());
+                    updateSearchInputFromFilters();
                 }
                 updateFilterSummary();
             }
@@ -211,22 +205,15 @@ public class SearchActivity extends AppCompatActivity {
                     String value = kv[1];
                     
                     if (key.equals("genre")) {
-                        checkChipByText(value);
+                        String[] genres = value.split(",");
+                        for (String g : genres) {
+                            checkChipByText(g);
+                        }
                     } else if (key.equals("year")) {
-                        // Task: Support <2020 and individual years like 2019
                         if (value.equals("<2020")) {
                             selectSpinnerByText("Before 2020");
                         } else {
-                            try {
-                                int y = Integer.parseInt(value);
-                                if (y < 2020) {
-                                    selectSpinnerByText("Before 2020");
-                                } else {
-                                    selectSpinnerByText(value);
-                                }
-                            } catch (NumberFormatException e) {
-                                selectSpinnerByText(value);
-                            }
+                            selectSpinnerByText(value);
                         }
                     } else if (key.equals("director")) {
                         if (!etDirector.getText().toString().equalsIgnoreCase(value)) {
@@ -261,33 +248,45 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    private void updateSearchInputWithFilter(String key, String value) {
+    private void updateSearchInputFromFilters() {
         isInternalUpdating = true;
         String currentInput = etSearchInput.getText().toString().trim();
         
-        String regex = "\\b" + key + ":\\S+";
-        currentInput = currentInput.replaceAll(regex, "").trim().replaceAll("\\s+", " ");
+        // Remove existing tags
+        currentInput = currentInput.replaceAll("\\b(genre|year|director):\\S+", "").trim().replaceAll("\\s+", " ");
         
-        if (!value.isEmpty()) {
-            if (currentInput.isEmpty()) {
-                currentInput = key + ":" + value;
-            } else {
-                currentInput = currentInput + " " + key + ":" + value;
+        StringBuilder sb = new StringBuilder(currentInput);
+        
+        // Add Genres
+        List<Integer> checkedIds = cgGenres.getCheckedChipIds();
+        if (!checkedIds.isEmpty()) {
+            List<String> genres = new ArrayList<>();
+            for (int id : checkedIds) {
+                Chip chip = findViewById(id);
+                if (chip != null) genres.add(chip.getText().toString().toLowerCase());
             }
+            if (sb.length() > 0) sb.append(" ");
+            sb.append("genre:").append(String.join(",", genres));
         }
         
-        etSearchInput.setText(currentInput);
-        etSearchInput.setSelection(currentInput.length());
-        isInternalUpdating = false;
-    }
-
-    private void removeFilterFromSearchInput(String key, String value) {
-        isInternalUpdating = true;
-        String currentInput = etSearchInput.getText().toString().trim();
-        String filterTag = key + ":" + value;
-        currentInput = currentInput.replace(filterTag, "").trim().replaceAll("\\s+", " ");
-        etSearchInput.setText(currentInput);
-        etSearchInput.setSelection(currentInput.length());
+        // Add Year
+        String selectedYear = spinnerYear.getSelectedItem().toString();
+        if (!selectedYear.equals("All Years")) {
+            String tagValue = selectedYear.equals("Before 2020") ? "<2020" : selectedYear;
+            if (sb.length() > 0) sb.append(" ");
+            sb.append("year:").append(tagValue);
+        }
+        
+        // Add Director
+        String director = etDirector.getText().toString().trim();
+        if (!director.isEmpty()) {
+            if (sb.length() > 0) sb.append(" ");
+            sb.append("director:").append(director.toLowerCase());
+        }
+        
+        String result = sb.toString();
+        etSearchInput.setText(result);
+        etSearchInput.setSelection(result.length());
         isInternalUpdating = false;
     }
 
@@ -300,11 +299,17 @@ public class SearchActivity extends AppCompatActivity {
 
     private void updateFilterSummary() {
         List<String> activeFilters = new ArrayList<>();
-        int checkedId = cgGenres.getCheckedChipId();
-        if (checkedId != View.NO_ID) {
-            Chip chip = findViewById(checkedId);
-            if (chip != null) activeFilters.add("genre:" + chip.getText().toString().toLowerCase());
+        
+        List<Integer> checkedIds = cgGenres.getCheckedChipIds();
+        if (!checkedIds.isEmpty()) {
+            List<String> genres = new ArrayList<>();
+            for (int id : checkedIds) {
+                Chip chip = findViewById(id);
+                if (chip != null) genres.add(chip.getText().toString().toLowerCase());
+            }
+            activeFilters.add("genre:" + String.join(",", genres));
         }
+
         String selectedYear = spinnerYear.getSelectedItem() != null ? spinnerYear.getSelectedItem().toString() : "";
         if (!selectedYear.isEmpty() && !selectedYear.equals("All Years")) {
             String tagValue = selectedYear.equals("Before 2020") ? "<2020" : selectedYear;
@@ -328,12 +333,13 @@ public class SearchActivity extends AppCompatActivity {
     private void performSearch() {
         String query = etSearchInput.getText().toString().trim();
         
-        String genre = "";
-        int checkedId = cgGenres.getCheckedChipId();
-        if (checkedId != View.NO_ID) {
-            Chip chip = findViewById(checkedId);
-            if (chip != null) genre = chip.getText().toString();
+        List<String> genresList = new ArrayList<>();
+        List<Integer> checkedIds = cgGenres.getCheckedChipIds();
+        for (int id : checkedIds) {
+            Chip chip = findViewById(id);
+            if (chip != null) genresList.add(chip.getText().toString());
         }
+        String genre = String.join(",", genresList);
 
         String year = spinnerYear.getSelectedItem() != null ? spinnerYear.getSelectedItem().toString() : "";
         String director = etDirector.getText().toString().trim();
@@ -348,7 +354,7 @@ public class SearchActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, SearchResultActivity.class);
         intent.putExtra("QUERY", query);
-        intent.putExtra("GENRE", genre);
+        intent.putExtra("GENRE", genre); // This now contains comma-separated values
         intent.putExtra("YEAR", year);
         intent.putExtra("DIRECTOR", director);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -387,9 +393,15 @@ public class SearchActivity extends AppCompatActivity {
         chip.setCloseIconVisible(true);
         chip.setCheckable(false);
         chip.setClickable(true);
-        chip.setChipBackgroundColorResource(android.R.color.transparent);
+        
+        // Match the design from the image: Light purple-ish background, subtle border
+        chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#F9F5FF")));
+        chip.setChipStrokeColor(ColorStateList.valueOf(Color.parseColor("#E9D7FE")));
         chip.setChipStrokeWidth(1f);
-        chip.setChipStrokeColorResource(android.R.color.darker_gray);
+        chip.setChipCornerRadius(24f); // More rounded
+        chip.setTextColor(Color.parseColor("#333333"));
+        chip.setCloseIconTint(ColorStateList.valueOf(Color.parseColor("#666666")));
+
         chip.setOnClickListener(v -> {
             etSearchInput.setText(text);
             performSearch();

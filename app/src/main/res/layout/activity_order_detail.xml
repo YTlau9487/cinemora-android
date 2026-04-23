@@ -181,6 +181,18 @@
                         app:layout_constraintBaseline_toBaselineOf="@id/TotalLabel"
                         app:layout_constraintEnd_toEndOf="parent" />
 
+                    <TextView
+                        android:id="@+id/tvMortgageStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Fully paid with credits"
+                        android:textColor="#888888"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/TotalValue" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -257,6 +269,27 @@
                         app:layout_constraintBaseline_toBaselineOf="@id/CreditsUsedLabel"
                         app:layout_constraintEnd_toEndOf="parent" />
 
+                    <TextView
+                        android:id="@+id/EarnedCreditLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Earned from this order"
+                        android:textColor="#888888"
+                        android:textSize="15sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/CreditsUsedLabel" />
+
+                    <TextView
+                        android:id="@+id/EarnedCreditValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+ 20 pts"
+                        android:textColor="#2ECC71"
+                        android:textSize="15sp"
+                        app:layout_constraintBaseline_toBaselineOf="@id/EarnedCreditLabel"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
                     <View
                         android:id="@+id/dividerCredits"
                         android:layout_width="0dp"
@@ -265,7 +298,7 @@
                         android:background="#F0F0F0"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/CreditsUsedLabel" />
+                        app:layout_constraintTop_toBottomOf="@id/EarnedCreditLabel" />
 
                     <TextView
                         android:id="@+id/CreditsAfterLabel"

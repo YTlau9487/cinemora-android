@@ -2,6 +2,7 @@ package com.cinemora.movieorder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -62,9 +65,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         holder.tvRating.setText(String.format(Locale.US, "%.1f", (double) movie.getRating()));
         holder.tvPrice.setText(String.format(Locale.getDefault(), "HKD %d", movie.getCost()));
 
+        // Improved Image Loading: Use a neutral placeholder and smooth cross-fade
         Glide.with(context)
                 .load(movie.getPosterUrl())
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(new ColorDrawable(ContextCompat.getColor(context, R.color.shimmer_placeholder)))
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .error(new ColorDrawable(ContextCompat.getColor(context, R.color.shimmer_placeholder)))
                 .into(holder.imgPoster);
 
         holder.itemView.setOnClickListener(v -> {

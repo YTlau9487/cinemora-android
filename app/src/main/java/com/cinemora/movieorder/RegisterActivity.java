@@ -6,8 +6,10 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     private CheckBox termsCheckbox;
     private Button btnRegister;
     private TextView tvSignIn;
+    private ImageView ivClose;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
@@ -64,15 +67,34 @@ public class RegisterActivity extends AppCompatActivity {
         termsCheckbox = findViewById(R.id.terms_checkbox);
         btnRegister = findViewById(R.id.btn_register);
         tvSignIn = findViewById(R.id.tv_signin);
+        ivClose = findViewById(R.id.ivClose);
 
         setupTextWatchers();
 
         btnRegister.setOnClickListener(v -> registerUser());
         
         tvSignIn.setOnClickListener(v -> {
-            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            // Simply finish and go back to login, since register was started from login
             finish();
         });
+
+        if (ivClose != null) {
+            ivClose.setOnClickListener(v -> handleCloseAction());
+        }
+    }
+
+    private void handleCloseAction() {
+        // Return to Home (MainActivity)
+        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Default behavior: go back to Login (if started from there)
+        super.onBackPressed();
     }
 
     private void setupTextWatchers() {
