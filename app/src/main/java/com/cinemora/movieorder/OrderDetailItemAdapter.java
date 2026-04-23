@@ -1,6 +1,7 @@
 package com.cinemora.movieorder;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -41,10 +44,12 @@ public class OrderDetailItemAdapter extends RecyclerView.Adapter<OrderDetailItem
         holder.tvMovieName.setText(item.getMovieName());
         holder.tvMovieCost.setText(DateUtils.formatCurrency(item.getCost()));
 
+        // Fix: Use correct Glide loading with smooth transitions and neutral placeholders
         Glide.with(holder.itemView.getContext())
                 .load(item.getPosterUrl())
-                .placeholder(R.mipmap.ic_launcher)
-                .error(R.mipmap.ic_launcher)
+                .placeholder(new ColorDrawable(ContextCompat.getColor(holder.itemView.getContext(), R.color.shimmer_placeholder)))
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .error(new ColorDrawable(ContextCompat.getColor(holder.itemView.getContext(), R.color.shimmer_placeholder)))
                 .into(holder.ivMoviePoster);
 
         // Simulated Portal: open ViewMovieActivity

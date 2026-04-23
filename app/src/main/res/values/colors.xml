@@ -4,4 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue_primary">#30BAFF</color>
     <color name="gray_slogan">#616161</color>
+    <color name="shimmer_placeholder">#F2F2F2</color>
+    <color name="credit_gain">#4CAF50</color>
+    <color name="credit_use">#F44336</color>
 </resources>

@@ -181,7 +181,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="GENRE"
+                        android:text="GENRES"
                         android:textSize="11sp"
                         android:textColor="#999999"
                         android:textStyle="bold"
@@ -192,13 +192,23 @@
                         android:id="@+id/cgGenres"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:singleSelection="true"
+                        app:singleSelection="false"
                         app:chipSpacingVertical="4dp"
                         app:chipSpacingHorizontal="8dp">
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Action"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Adventure"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
                             android:textColor="@color/genre_chip_text_color"
                             app:chipBackgroundColor="@color/white"
@@ -218,6 +228,16 @@
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="Crime"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="Drama"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
                             android:textColor="@color/genre_chip_text_color"
@@ -228,7 +248,57 @@
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="Fantasy"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Horror"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mystery"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Romance"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="Sci-Fi"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:textColor="@color/genre_chip_text_color"
+                            app:chipBackgroundColor="@color/white"
+                            app:chipStrokeColor="#E0E0E0"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="12dp"/>
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thriller"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
                             android:textColor="@color/genre_chip_text_color"
                             app:chipBackgroundColor="@color/white"

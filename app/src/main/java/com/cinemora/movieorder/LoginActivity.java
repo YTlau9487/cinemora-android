@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,18 +25,23 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = "LoginActivity";
     private TextInputLayout tilEmail, tilPassword;
     private TextInputEditText emailInput, passwordInput;
     private Button btnLogin;
     private TextView tvSignUp;
-    private View layoutBack;
+    private ImageView ivClose;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
+    private FirebaseManager firebaseManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
+        firebaseManager = new FirebaseManager();
 
         // Initialize Views
         tilEmail = findViewById(R.id.til_email);
@@ -59,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.password_input);
         btnLogin = findViewById(R.id.btn_login);
         tvSignUp = findViewById(R.id.tv_signup);
-        layoutBack = findViewById(R.id.layoutBack);
+        ivClose = findViewById(R.id.ivClose);
 
         setupTextWatchers();
 
@@ -67,12 +75,26 @@ public class LoginActivity extends AppCompatActivity {
         
         tvSignUp.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-            finish();
+            // No finish() here, keep login in stack so user can go back to it from register
         });
 
-        if (layoutBack != null) {
-            layoutBack.setOnClickListener(v -> finish());
+        if (ivClose != null) {
+            ivClose.setOnClickListener(v -> handleCloseAction());
         }
+    }
+
+    private void handleCloseAction() {
+        // Return to Home (MainActivity)
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // System back button also follows the "Back to Home" logic for consistency
+        handleCloseAction();
     }
 
     private void setupTextWatchers() {
@@ -92,13 +114,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser() {
-        String input = emailInput.getText().toString().trim();
+        String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
 
         boolean isValid = true;
 
-        if (TextUtils.isEmpty(input)) {
-            tilEmail.setError("Please enter your email or username");
+        if (TextUtils.isEmpty(email)) {
+            tilEmail.setError("Please enter your email");
+            isValid = false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            tilEmail.setError("Invalid email format");
             isValid = false;
         }
 
@@ -110,47 +135,7 @@ public class LoginActivity extends AppCompatActivity {
         if (!isValid) return;
 
         setLoadingState(true);
-
-        // Check if input is email or username
-        if (input.contains("@")) {
-            if (!Patterns.EMAIL_ADDRESS.matcher(input).matches()) {
-                setLoadingState(false);
-                tilEmail.setError("Invalid email format");
-                return;
-            }
-            signInWithEmail(input, password);
-        } else {
-            signInWithUsername(input, password);
-        }
-    }
-
-    private void signInWithUsername(String username, String password) {
-        mFirestore.collection("users")
-                .whereEqualTo("username", username)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
-                        String email = null;
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            email = document.getString("email");
-                            break;
-                        }
-                        
-                        if (email != null) {
-                            signInWithEmail(email, password);
-                        } else {
-                            setLoadingState(false);
-                            tilEmail.setError("Error finding account for this username");
-                        }
-                    } else {
-                        setLoadingState(false);
-                        tilEmail.setError("Username not found");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    setLoadingState(false);
-                    Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+        signInWithEmail(email, password);
     }
 
     private void signInWithEmail(String email, String password) {
@@ -158,12 +143,55 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         String uid = mAuth.getCurrentUser().getUid();
-                        fetchUserDataAndNavigate(uid);
+                        validateCartAndNavigate(uid);
                     } else {
                         setLoadingState(false);
                         handleSignInError(task.getException());
                     }
                 });
+    }
+
+    private void validateCartAndNavigate(String uid) {
+        List<CartItem> cartItems = CartManager.getInstance(this).getCartItems();
+        if (cartItems.isEmpty()) {
+            fetchUserDataAndNavigate(uid);
+            return;
+        }
+
+        firebaseManager.getUserOwnedMovieIds(uid, new FirebaseManager.OnOwnedMoviesLoadedListener() {
+            @Override
+            public void onLoaded(Set<String> ownedIds) {
+                cleanCart(ownedIds, uid);
+            }
+
+            @Override
+            public void onError(String message) {
+                Log.e(TAG, "Error validating cart: " + message);
+                fetchUserDataAndNavigate(uid);
+            }
+        });
+    }
+
+    private void cleanCart(Set<String> purchasedMovieIds, String uid) {
+        CartManager cartManager = CartManager.getInstance(this);
+        List<CartItem> cartItems = cartManager.getCartItems();
+        boolean itemsRemoved = false;
+        List<String> removedNames = new ArrayList<>();
+
+        for (CartItem item : new ArrayList<>(cartItems)) {
+            if (purchasedMovieIds.contains(item.getMovieId())) {
+                cartManager.removeItem(item.getMovieId());
+                removedNames.add(item.getMovieName());
+                itemsRemoved = true;
+            }
+        }
+
+        if (itemsRemoved) {
+            String message = "Note: Already owned movies were removed from your cart.";
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        }
+
+        fetchUserDataAndNavigate(uid);
     }
 
     private void handleSignInError(Exception exception) {

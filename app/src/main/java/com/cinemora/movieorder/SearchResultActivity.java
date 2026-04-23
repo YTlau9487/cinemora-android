@@ -20,12 +20,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SearchResultActivity extends AppCompatActivity {
 
@@ -150,6 +152,35 @@ public class SearchResultActivity extends AppCompatActivity {
         if (movieResults.isEmpty()) return;
 
         switch (currentSortMode) {
+            case "Relevant":
+                Collections.sort(movieResults, (m1, m2) -> {
+                    // Extract clean title from lastQuery
+                    String cleanQuery = lastQuery != null ? lastQuery.replaceAll("\\b(genre|year|director):\\S+", "").trim().toLowerCase() : "";
+                    
+                    int score1 = 0;
+                    int score2 = 0;
+                    
+                    if (!cleanQuery.isEmpty()) {
+                        String name1 = m1.getMovieName().toLowerCase();
+                        String name2 = m2.getMovieName().toLowerCase();
+                        
+                        if (name1.equals(cleanQuery)) score1 += 100;
+                        else if (name1.startsWith(cleanQuery)) score1 += 50;
+                        else if (name1.contains(cleanQuery)) score1 += 10;
+                        
+                        if (name2.equals(cleanQuery)) score2 += 100;
+                        else if (name2.startsWith(cleanQuery)) score2 += 50;
+                        else if (name2.contains(cleanQuery)) score2 += 10;
+                    }
+                    
+                    if (score1 != score2) {
+                        return Integer.compare(score2, score1);
+                    }
+                    
+                    // Tie-breaker: saleCount (Popularity)
+                    return Integer.compare(m2.getSaleCount(), m1.getSaleCount());
+                });
+                break;
             case "Year (Newest)":
                 Collections.sort(movieResults, (m1, m2) -> Integer.compare(m2.getReleaseYear(), m1.getReleaseYear()));
                 break;
@@ -207,7 +238,7 @@ public class SearchResultActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Query firestoreQuery = db.collection("movies");
 
-        String parsedGenre = genre;
+        String parsedGenreStr = genre;
         String parsedYear = year;
         String parsedDirector = director;
         String parsedTitle = query;
@@ -220,7 +251,7 @@ public class SearchResultActivity extends AppCompatActivity {
                     if (kv.length == 2) {
                         String key = kv[0].toLowerCase();
                         String val = kv[1];
-                        if (key.equals("genre")) parsedGenre = val;
+                        if (key.equals("genre")) parsedGenreStr = val;
                         else if (key.equals("year")) parsedYear = val;
                         else if (key.equals("director")) parsedDirector = val;
                     }
@@ -229,32 +260,10 @@ public class SearchResultActivity extends AppCompatActivity {
             parsedTitle = query.replaceAll("\\b(genre|year|director):\\S+", "").trim().replaceAll("\\s+", " ");
         }
 
-        if (parsedGenre != null && !parsedGenre.isEmpty()) {
-            firestoreQuery = firestoreQuery.whereArrayContains("genres", 
-                    parsedGenre.substring(0, 1).toUpperCase() + parsedGenre.substring(1).toLowerCase());
-        }
-
-        if (parsedYear != null && !parsedYear.isEmpty() && !parsedYear.equals("All Years")) {
-            if (parsedYear.equals("Before 2020") || parsedYear.equals("<2020")) {
-                firestoreQuery = firestoreQuery.whereLessThan("releaseDate", 1577836800L);
-            } else {
-                try {
-                    int y = Integer.parseInt(parsedYear);
-                    if (y < 2020) {
-                        firestoreQuery = firestoreQuery.whereLessThan("releaseDate", 1577836800L);
-                    } else {
-                        Calendar cal = Calendar.getInstance();
-                        cal.set(y, 0, 1, 0, 0, 0);
-                        long start = cal.getTimeInMillis() / 1000;
-                        cal.set(y, 11, 31, 23, 59, 59);
-                        long end = cal.getTimeInMillis() / 1000;
-                        firestoreQuery = firestoreQuery.whereGreaterThanOrEqualTo("releaseDate", start)
-                                                       .whereLessThanOrEqualTo("releaseDate", end);
-                    }
-                } catch (NumberFormatException ignored) {}
-            }
-        }
-
+        final List<String> targetGenres = (parsedGenreStr != null && !parsedGenreStr.isEmpty()) 
+                ? Arrays.asList(parsedGenreStr.split(",")) : new ArrayList<>();
+        
+        final String finalYear = parsedYear;
         final String finalTitle = parsedTitle;
         final String finalDirector = parsedDirector;
 
@@ -263,13 +272,43 @@ public class SearchResultActivity extends AppCompatActivity {
             List<Movie> filteredResults = new ArrayList<>();
 
             for (Movie movie : results) {
+                // 1. Title partial match
                 boolean matchesTitle = (finalTitle == null || finalTitle.isEmpty() || 
                         movie.getMovieName().toLowerCase().contains(finalTitle.toLowerCase()));
                 
+                // 2. Director partial match
                 boolean matchesDirector = (finalDirector == null || finalDirector.isEmpty() || 
                         (movie.getDirector() != null && movie.getDirector().toLowerCase().contains(finalDirector.toLowerCase())));
 
-                if (matchesTitle && matchesDirector) {
+                // 3. Year range/specific match
+                boolean matchesYear = true;
+                if (finalYear != null && !finalYear.isEmpty() && !finalYear.equals("All Years")) {
+                    int movieYear = movie.getReleaseYear();
+                    if (finalYear.equals("Before 2020") || finalYear.equals("<2020")) {
+                        matchesYear = (movieYear < 2020);
+                    } else {
+                        try {
+                            int targetYear = Integer.parseInt(finalYear);
+                            matchesYear = (movieYear == targetYear);
+                        } catch (NumberFormatException ignored) {}
+                    }
+                }
+
+                // 4. Multiple Genre match (AND logic: movie must have ALL selected genres)
+                boolean matchesGenre = true;
+                if (!targetGenres.isEmpty()) {
+                    List<String> movieGenres = movie.getGenres().stream()
+                            .map(String::toLowerCase)
+                            .collect(Collectors.toList());
+                    for (String g : targetGenres) {
+                        if (!movieGenres.contains(g.toLowerCase().trim())) {
+                            matchesGenre = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (matchesTitle && matchesDirector && matchesYear && matchesGenre) {
                     filteredResults.add(movie);
                 }
             }
@@ -307,7 +346,6 @@ public class SearchResultActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Task: Refresh purchased and cart status on return
         refreshLocalCartStatus();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {

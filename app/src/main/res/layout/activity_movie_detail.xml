@@ -21,7 +21,7 @@
             android:layout_height="64dp"
             app:navigationIcon="@drawable/ic_arrow_back"
             app:navigationIconTint="#1F1F1F"
-            app:title="Back"
+            app:title="@string/back"
             app:titleCentered="false"
             app:titleMarginStart="16dp"
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
@@ -48,12 +48,25 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Fix Crash: Set enableAutomaticInitialization to false for manual initialize in Java -->
-            <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-                android:id="@+id/youtubePlayerView"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                app:enableAutomaticInitialization="false" />
+                android:background="#000000">
+
+                <androidx.media3.ui.PlayerView
+                    android:id="@+id/playerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:resize_mode="fixed_height"
+                    app:use_controller="true" />
+
+                <android.webkit.WebView
+                    android:id="@+id/vimeoWebView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone" />
+
+            </FrameLayout>
 
             <!-- Movie Header Info -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -69,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:text="Film Name"
+                    android:text="@string/film_name"
                     android:textColor="#333333"
                     android:textSize="22sp"
                     android:textStyle="bold"
@@ -93,7 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:text="8.5"
+                    android:text="@string/placeholder_rating_value"
                     android:textColor="#333333"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -101,7 +114,6 @@
                     app:layout_constraintStart_toEndOf="@id/ivStar"
                     app:layout_constraintTop_toTopOf="@id/ivStar" />
 
-                <!-- Refined Separator 1: Modern dot separator -->
                 <View
                     android:id="@+id/tvSep1"
                     android:layout_width="4dp"
@@ -117,14 +129,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="Action"
+                    android:text="@string/placeholder_category"
                     android:textColor="#666666"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="@id/tvSep1"
                     app:layout_constraintStart_toEndOf="@id/tvSep1"
                     app:layout_constraintTop_toTopOf="@id/tvSep1" />
 
-                <!-- Refined Separator 2: Modern dot separator -->
                 <View
                     android:id="@+id/tvSep2"
                     android:layout_width="4dp"
@@ -140,7 +151,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="2h 30m"
+                    android:text="@string/placeholder_duration"
                     android:textColor="#666666"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="@id/tvSep2"
@@ -162,7 +173,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:text="Overview"
+                    android:text="@string/overview_label"
                     android:textColor="#333333"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -172,7 +183,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:lineSpacingExtra="4dp"
-                    android:text="This is the film overview. Add your film description here."
+                    android:text="@string/placeholder_overview"
                     android:textColor="#666666"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -189,7 +200,7 @@
                     android:id="@+id/tvDetailsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Details"
+                    android:text="@string/details_label"
                     android:textColor="#333333"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -202,7 +213,7 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Director:"
+                    android:text="@string/director_label"
                     android:textColor="#666666"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -212,7 +223,7 @@
                     android:id="@+id/tvDirectorName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Director Name"
+                    android:text="@string/placeholder_director"
                     android:textColor="#333333"
                     android:textSize="14sp"
                     app:layout_constraintBaseline_toBaselineOf="@id/lblDirector"
@@ -225,7 +236,7 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Cast:"
+                    android:text="@string/cast_label"
                     android:textColor="#666666"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -235,7 +246,7 @@
                     android:id="@+id/tvCastName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Cast Names"
+                    android:text="@string/placeholder_cast"
                     android:textColor="#333333"
                     android:textSize="14sp"
                     app:layout_constraintBaseline_toBaselineOf="@id/lblCast"
@@ -248,7 +259,7 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Language:"
+                    android:text="@string/language_label"
                     android:textColor="#666666"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -258,7 +269,7 @@
                     android:id="@+id/tvLanguage"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="English"
+                    android:text="@string/placeholder_language"
                     android:textColor="#333333"
                     android:textSize="14sp"
                     app:layout_constraintBaseline_toBaselineOf="@id/lblLanguage"
@@ -271,7 +282,7 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Subtitle:"
+                    android:text="@string/subtitle_label"
                     android:textColor="#666666"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -281,7 +292,7 @@
                     android:id="@+id/tvSubtitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Chinese"
+                    android:text="@string/placeholder_subtitle"
                     android:textColor="#333333"
                     android:textSize="14sp"
                     app:layout_constraintBaseline_toBaselineOf="@id/lblSubtitle"
@@ -294,7 +305,7 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Resolution:"
+                    android:text="@string/resolution_label"
                     android:textColor="#666666"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -304,7 +315,7 @@
                     android:id="@+id/tvResolution"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="4K"
+                    android:text="@string/placeholder_resolution"
                     android:textColor="#333333"
                     android:textSize="14sp"
                     app:layout_constraintBaseline_toBaselineOf="@id/lblResolution"
@@ -330,7 +341,7 @@
             android:id="@+id/tvPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HKD 49.99"
+            android:text="@string/placeholder_price"
             android:textColor="#12CFC2"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -340,17 +351,14 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddToCart"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_width="160dp"
+            android:layout_height="50dp"
             android:backgroundTint="#12CFC2"
-            android:paddingHorizontal="32dp"
-            android:text="Add to Cart"
-            android:textAllCaps="false"
+            android:text="@string/add_to_cart"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:cornerRadius="12dp"
-            app:elevation="0dp"
+            app:cornerRadius="25dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

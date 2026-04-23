@@ -2,9 +2,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="#12CFC2" />
 
-    <!-- top-left round, bottom-right round -->
-    <!-- you can adjust based on your design -->
+    <!-- Match the parent CardView's 16dp radius for the bottom-right corner -->
     <corners
         android:topLeftRadius="18dp"
-        android:bottomRightRadius="18dp" />
+        android:bottomRightRadius="16dp" />
 </shape>

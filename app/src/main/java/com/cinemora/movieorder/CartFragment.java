@@ -73,7 +73,6 @@ public class CartFragment extends Fragment implements CartItemAdapter.OnCartItem
 
         if (btnCheckout != null) {
             btnCheckout.setOnClickListener(v -> {
-                // Task: Auth Guard - Check login before showing confirmation dialog
                 if (mAuth.getCurrentUser() != null) {
                     showConfirmationDialog();
                 } else {
@@ -137,7 +136,6 @@ public class CartFragment extends Fragment implements CartItemAdapter.OnCartItem
                         userCredits = user.getEarnedCredit();
                         tvCreditsAvailable.setText(userCredits + " pts");
                         
-                        // Checkbox state handling
                         if (cbUseCredits != null) {
                             boolean hasCredits = userCredits > 0;
                             cbUseCredits.setEnabled(hasCredits);
@@ -162,6 +160,7 @@ public class CartFragment extends Fragment implements CartItemAdapter.OnCartItem
         int finalTotal = subtotal;
         
         int creditGain = (int) Math.ceil(subtotal / 10.0);
+        // SMART CREDIT LOGIC: Only use as much as needed to cover the subtotal
         int creditsUsed = (cbUseCredits.isChecked() && userCredits > 0) ? Math.min(userCredits, subtotal) : 0;
         
         if (creditsUsed > 0) {
@@ -176,8 +175,13 @@ public class CartFragment extends Fragment implements CartItemAdapter.OnCartItem
 
         tvCartTotal.setText(DateUtils.formatCurrency(finalTotal));
         
-        int remainingCredits = (userCredits - creditsUsed) + creditGain;
-        tvAfterPurchaseCredit.setText("After Purchase: " + remainingCredits + " credits");
+        // Explicit Credit Messaging
+        int balanceAfterUse = userCredits - creditsUsed;
+        String message = "Credit Balance: " + balanceAfterUse + " pts";
+        if (creditGain > 0) {
+            message += " (+" + creditGain + " pts earned when bought)";
+        }
+        tvAfterPurchaseCredit.setText(message);
         
         if (cartItems != null && !cartItems.isEmpty()) {
             btnCheckout.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#12CFC2")));

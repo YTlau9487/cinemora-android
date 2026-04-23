@@ -46,6 +46,26 @@
 
     <!-- Film Details -->
     <string name="rating">Rating</string>
+    <string name="film_name">Film Name</string>
+    <string name="placeholder_rating_value">8.5</string>
+    <string name="placeholder_category">Action</string>
+    <string name="placeholder_duration">2h 30m</string>
+    <string name="overview_label">Overview</string>
+    <string name="placeholder_overview">This is the film overview. Add your film description here.</string>
+    <string name="details_label">Details</string>
+    <string name="director_label">Director:</string>
+    <string name="placeholder_director">Director Name</string>
+    <string name="cast_label">Cast:</string>
+    <string name="placeholder_cast">Cast Names</string>
+    <string name="language_label">Language:</string>
+    <string name="placeholder_language">English</string>
+    <string name="subtitle_label">Subtitle:</string>
+    <string name="placeholder_subtitle">Chinese</string>
+    <string name="resolution_label">Resolution:</string>
+    <string name="placeholder_resolution">4K</string>
+    <string name="placeholder_price">HKD 49.99</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="back">Back</string>
 
     <string name="slogan">one tap, one movie</string>
 </resources>
