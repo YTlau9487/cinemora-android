@@ -43,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseFirestore mFirestore;
     private FirebaseManager firebaseManager;
 
+    private boolean isAuthenticating = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,12 +76,16 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> loginUser());
         
         tvSignUp.setOnClickListener(v -> {
+            if (isAuthenticating) return;
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             // No finish() here, keep login in stack so user can go back to it from register
         });
 
         if (ivClose != null) {
-            ivClose.setOnClickListener(v -> handleCloseAction());
+            ivClose.setOnClickListener(v -> {
+                if (isAuthenticating) return;
+                handleCloseAction();
+            });
         }
     }
 
@@ -93,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (isAuthenticating) return;
         // System back button also follows the "Back to Home" logic for consistency
         handleCloseAction();
     }
@@ -114,6 +121,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser() {
+        if (isAuthenticating) return;
+
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
 
@@ -134,6 +143,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (!isValid) return;
 
+        isAuthenticating = true;
         setLoadingState(true);
         signInWithEmail(email, password);
     }
@@ -145,6 +155,7 @@ public class LoginActivity extends AppCompatActivity {
                         String uid = mAuth.getCurrentUser().getUid();
                         validateCartAndNavigate(uid);
                     } else {
+                        isAuthenticating = false;
                         setLoadingState(false);
                         handleSignInError(task.getException());
                     }
@@ -160,8 +171,8 @@ public class LoginActivity extends AppCompatActivity {
 
         firebaseManager.getUserOwnedMovieIds(uid, new FirebaseManager.OnOwnedMoviesLoadedListener() {
             @Override
-            public void onLoaded(Set<String> ownedIds) {
-                cleanCart(ownedIds, uid);
+            public void onLoaded(Set<String> movieIds) {
+                cleanCart(movieIds, uid);
             }
 
             @Override
@@ -222,6 +233,7 @@ public class LoginActivity extends AppCompatActivity {
         mFirestore.collection("users").document(uid)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
+                    isAuthenticating = false;
                     if (documentSnapshot.exists()) {
                         User user = documentSnapshot.toObject(User.class);
                         if (user != null) {
@@ -240,6 +252,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
+                    isAuthenticating = false;
                     setLoadingState(false);
                     Toast.makeText(LoginActivity.this, "Error fetching profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });

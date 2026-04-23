@@ -38,6 +38,8 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
 
+    private boolean isAuthenticating = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,12 +76,16 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(v -> registerUser());
         
         tvSignIn.setOnClickListener(v -> {
+            if (isAuthenticating) return;
             // Simply finish and go back to login, since register was started from login
             finish();
         });
 
         if (ivClose != null) {
-            ivClose.setOnClickListener(v -> handleCloseAction());
+            ivClose.setOnClickListener(v -> {
+                if (isAuthenticating) return;
+                handleCloseAction();
+            });
         }
     }
 
@@ -93,6 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (isAuthenticating) return;
         // Default behavior: go back to Login (if started from there)
         super.onBackPressed();
     }
@@ -118,6 +125,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
+        if (isAuthenticating) return;
+
         String username = usernameInput.getText().toString().trim();
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
@@ -161,6 +170,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+        isAuthenticating = true;
         setLoadingState(true);
 
         // Check if username is already taken before creating Auth user
@@ -169,16 +179,17 @@ public class RegisterActivity extends AppCompatActivity {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
+                        isAuthenticating = false;
                         setLoadingState(false);
                         tilUsername.setError("This username is already taken");
-                    } else {
+                    } else if (task.isSuccessful()) {
                         // Username is available, proceed with registration
                         createAuthUser(username, email, password);
+                    } else {
+                        isAuthenticating = false;
+                        setLoadingState(false);
+                        Toast.makeText(RegisterActivity.this, "Error checking username", Toast.LENGTH_SHORT).show();
                     }
-                })
-                .addOnFailureListener(e -> {
-                    setLoadingState(false);
-                    Toast.makeText(RegisterActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -189,6 +200,7 @@ public class RegisterActivity extends AppCompatActivity {
                         String uid = mAuth.getCurrentUser().getUid();
                         saveUserToFirestore(uid, username, email);
                     } else {
+                        isAuthenticating = false;
                         setLoadingState(false);
                         handleRegistrationError(task.getException());
                     }
@@ -223,14 +235,16 @@ public class RegisterActivity extends AppCompatActivity {
 
         mFirestore.collection("users").document(uid)
                 .set(user)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(RegisterActivity.this, "Account Created Successfully!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    setLoadingState(false);
-                    Toast.makeText(RegisterActivity.this, "Error saving profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                .addOnCompleteListener(task -> {
+                    isAuthenticating = false;
+                    if (task.isSuccessful()) {
+                        Toast.makeText(RegisterActivity.this, "Account Created Successfully!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                        finish();
+                    } else {
+                        setLoadingState(false);
+                        Toast.makeText(RegisterActivity.this, "Error saving profile: " + (task.getException() != null ? task.getException().getMessage() : "Unknown error"), Toast.LENGTH_LONG).show();
+                    }
                 });
     }
 }
